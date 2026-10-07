@@ -311,39 +311,27 @@
     const sem = diasSemTreino();
     const prox = proximoTreino();
     const ativa = E.sessaoAtiva;
-    let auraTxt, auraW;
-    if (!au.prox) { auraTxt = H.AURAS[au.estagio].nome + ': nível máximo'; auraW = 100; }
-    else {
-      const base = au.estagio ? H.AURAS[au.estagio].dias : 0;
-      auraW = Math.min(100, (au.pts - base) / (au.prox.dias - base) * 100);
-      auraTxt = (au.estagio ? H.AURAS[au.estagio].nome + ' ativa. ' : '') + 'Próxima: ' + au.prox.nome + ' em ' + (au.prox.dias - au.pts) + ' dias';
-    }
+    const auraTxt = !au.prox ? H.AURAS[au.estagio].nome + ' no máximo' : (au.prox.dias - au.pts) + ' dias para a ' + au.prox.nome.toLowerCase();
     const m = medidaAtual();
+    // um único aviso, o mais importante
+    let aviso = '';
+    if (sem >= DIAS_SONO && E.sessoes.length) aviso = `<div class="alerta">${sem} dias sem treinar. Seu gato está ${sem >= DIAS_APAGADO ? 'sem brilho' : 'sonolento'}.</div>`;
+    else if (au.ultimaPen && au.ultimaPen.pen) aviso = `<div class="alerta">Semana passada teve ${au.ultimaPen.c} treino${au.ultimaPen.c === 1 ? '' : 's'}. A aura perdeu ${au.ultimaPen.pen} dias.</div>`;
+    else if (!m) aviso = `<button class="aviso-link" data-a="abrirMedidas">Cadastre suas medidas para o gato ficar com o seu corpo</button>`;
+    else if (E.sessoes.length && difDias(hoje(), E.ultimoBackup || E.perfil.criadoEm) >= DIAS_BACKUP) aviso = `<button class="aviso-link" data-a="abrirBackup">Faça um backup dos seus dados</button>`;
+    const botao = ativa ? `<button class="btn verde grande" data-a="abrirSessao">Continuar ${esc(ativa.nome)}</button>`
+      : prox ? `<button class="btn prim grande" data-a="iniciarTreino" data-id="${prox.id}">Treinar ${esc(prox.nome)}</button>` : '';
     $('#tela-heroi').innerHTML = `
       <div class="palco"><div class="cenario" id="cenario"></div><div class="heroi-wrap" id="heroi-wrap" data-a="tocarHeroi"></div><div class="balao" id="balao">Olá${nome}!</div></div>
-      <div class="stats">
-        <div class="stat"><b>${nv}</b><span>nível</span></div>
-        <div class="stat"><b>${st.semanas}</b><span>semanas</span></div>
-        <div class="stat"><b>${au.pts}</b><span>dias de aura</span></div>
+      <div class="resumo">
+        <div><b>${nv}</b><span>nível</span></div>
+        <div><b>${st.atual}/${st.meta}</b><span>treinos na semana</span></div>
+        <div><b class="brasa">${au.pts}</b><span>dias de aura</span></div>
       </div>
-      ${ativa ? `<div class="cartao"><div class="prox"><div class="tit"><b>${esc(ativa.nome)}</b><span>Treino em andamento</span></div><button class="btn verde" data-a="abrirSessao">Continuar</button></div></div>` :
-        prox ? `<div class="cartao"><div class="prox"><div class="tit"><small class="sub peq">Sugestão para hoje</small><b>${esc(prox.nome)}</b><span>${prox.itens.length} exercícios, ${prox.itens.reduce((s, i) => s + i.series, 0)} séries</span></div><button class="btn prim" data-a="iniciarTreino" data-id="${prox.id}">Começar</button></div></div>` : ''}
-      <div class="cartao">
-        <div class="linha"><h2>Meta da semana</h2><b class="fd">${st.atual} de ${st.meta}</b></div>
-        <div class="bolinhas">${Array.from({ length: st.meta }, (_, i) => `<i class="${i < st.atual ? 'ok' : ''}"></i>`).join('')}</div>
-        <div style="margin-top:14px" class="linha"><span class="peq" style="font-weight:800">Aura</span><small>${au.cur >= MIN_AURA ? 'semana garantida' : 'treine ' + (MIN_AURA - au.cur) + 'x para garantir a semana'}</small></div>
-        <div class="barra aura-barra"><i style="width:${auraW}%"></i></div>
-        <p class="sub peq" style="margin-top:6px">${esc(auraTxt)}</p>
-        ${au.ultimaPen && au.ultimaPen.pen ? `<div class="alerta">Semana passada: ${au.ultimaPen.c} treino${au.ultimaPen.c === 1 ? '' : 's'}. Sua aura perdeu ${au.ultimaPen.pen} dias.</div>` : ''}
-        ${sem >= DIAS_SONO ? `<div class="alerta">${sem} dias sem treinar. Seu herói está ${sem >= DIAS_APAGADO ? 'sem brilho' : 'sonolento'}.</div>` : ''}
-      </div>
-      <div class="cartao">
-        <div class="linha"><h2>Atributos</h2><small>nível geral = soma</small></div>
-        ${ATTRS.map(a => { const i = infoNivel(E.xp[a.id]); return `<div class="attr"><div class="badge" style="background:${a.cor}">${a.sig}</div><div><div class="nm">${a.nome}<small>${i.atual}/${i.prox} XP</small></div><div class="barra"><i style="width:${i.atual / i.prox * 100}%;background:${a.cor}"></i></div></div><div class="nv">${i.nivel}</div></div>`; }).join('')}
-      </div>
-      ${m ? `<div class="cartao slim"><div class="linha"><div><b class="fd" style="font-size:18px">${num(m.peso)} kg</b> <span class="sub peq">${m.musculoKg ? num(H.corpoDeMedidas(m).pctM) + '% de massa muscular' : ''}</span></div><button class="btn mini" data-a="abrirMedidas">Medidas</button></div></div>`
-        : `<div class="cartao"><h2>Seu gato tem o seu corpo</h2><p class="sub">Cadastre peso, altura e massa muscular. O gato fica magro, forte ou gordo conforme as suas medidas reais.</p><button class="btn azul largo" style="margin-top:12px" data-a="abrirMedidas">Cadastrar medidas</button></div>`}
-      ${E.sessoes.length && difDias(hoje(), E.ultimoBackup || E.perfil.criadoEm) >= DIAS_BACKUP ? `<div class="info">Faz ${difDias(hoje(), E.ultimoBackup || E.perfil.criadoEm)} dias sem backup. <a href="#" data-a="abrirBackup" style="color:inherit">Fazer agora</a></div>` : ''}
+      <div class="semana-mini">${Array.from({ length: st.meta }, (_, i) => `<i class="${i < st.atual ? 'ok' : ''}"></i>`).join('')}</div>
+      <p class="sub peq resumo-aura">${esc(auraTxt)}${au.cur >= MIN_AURA ? '. Semana garantida.' : '. Treine ' + (MIN_AURA - au.cur) + 'x esta semana para manter.'}</p>
+      ${botao}
+      ${aviso}
     `;
     desenharHeroi();
     if (!poseTemp) fala(sem >= DIAS_APAGADO ? sorteia(FRASES.apagado) : sem >= DIAS_SONO ? sorteia(FRASES.sono) : (E.perfil.nome && Math.random() < 0.4 ? 'Olá' + nome + '!' : sorteia(FRASES.oi)));
@@ -363,7 +351,7 @@
         const g = grupoPor(t.g), ex = exPor(t.itens[0].ex);
         return `<button class="grupo-c" style="--cor:${g.cor}" data-a="abrirGrupo" data-id="${t.id}"><div class="mini" data-anim="${ex.id}"></div><b>${esc(g.id === 'fullbody' ? 'Full Body' : (g.curto || g.nome))}</b><small>${resumoTreino(t)}</small></button>`;
       }).join('')}</div>
-      <div class="cartao"><h2>Como os treinos foram montados</h2>${CIENCIA.map(c => `<p class="sub peq" style="margin-top:8px">${esc(c)}</p>`).join('')}<p class="nota" style="text-align:left;margin:12px 0 0">Referências: Schoenfeld, Ogborn e Krieger (2017), sobre volume semanal; Schoenfeld e colaboradores (2016), sobre intervalo de descanso; Helgerud e colaboradores (2007), sobre o protocolo 4x4. São treinos genéricos e podem ser ajustados. Com dor ou lesão, procure um profissional.</p></div>`;
+      <button class="aviso-link" data-a="abrirCiencia" style="margin-top:14px">Como os treinos foram montados</button>`;
     } else {
       corpo = (meus.length ? meus.map(t => `<div class="cartao"><div class="treino-c"><div class="tit"><b>${esc(t.nome)}</b><span>${resumoTreino(t)}</span></div><button class="btn prim mini" data-a="iniciarTreino" data-id="${t.id}">Iniciar</button></div>
         <div class="chips">${[...new Set(t.itens.map(i => exPor(i.ex).g))].map(g => `<span class="chip">${esc(grupoPor(g).curto || grupoPor(g).nome)}</span>`).join('')}</div>
@@ -676,6 +664,8 @@
     if (!exGraf || !comHist.includes(exGraf)) exGraf = comHist[0] || null;
     const lista = E.sessoes.slice().reverse().slice(0, 30);
     $('#tela-progresso').innerHTML = `<h1>Progresso</h1>
+      <div class="cartao"><div class="linha"><h2>Atributos</h2><small>nível ${nivelGeral()}, soma dos atributos</small></div>
+        ${ATTRS.map(a => { const i = infoNivel(E.xp[a.id]); return `<div class="attr"><div class="badge" style="background:${a.cor}">${a.sig}</div><div><div class="nm">${a.nome}<small>${i.atual}/${i.prox} XP</small></div><div class="barra"><i style="width:${i.atual / i.prox * 100}%;background:${a.cor}"></i></div></div><div class="nv">${i.nivel}</div></div>`; }).join('')}</div>
       <div class="kpis" style="margin-top:10px">
         <div class="kpi"><b>${treinosMes}</b><span>treinos neste mês</span></div>
         <div class="kpi"><b>${new Set(E.sessoes.map(s => s.data)).size}</b><span>treinos no total</span></div>
@@ -954,6 +944,7 @@
       salvar(); redesenharTopo();
     },
     abrirAuras: () => abrirFolha('auras', telaAuras),
+    abrirCiencia: () => abrirFolha('ciencia', () => topoFolha('Como os treinos foram montados') + CIENCIA.map(c => `<p class="sub" style="margin:12px 0">${esc(c)}</p>`).join('') + `<p class="nota">Referências: Schoenfeld, Ogborn e Krieger (2017), sobre volume semanal; Schoenfeld e colaboradores (2016), sobre intervalo de descanso; Helgerud e colaboradores (2007), sobre o protocolo 4x4. São treinos genéricos e podem ser ajustados. Com dor ou lesão, procure um profissional.</p>`),
     previaAura: b => { auraPrevia = +b.dataset.v; fecharTodasFolhas(); ir('heroi'); fala('Prévia: ' + H.AURAS[auraPrevia].nome); setTimeout(() => { auraPrevia = null; desenharHeroi(); }, 6000); },
     abrirBackup: () => abrirFolha('backup', telaBackup, el => { const inp = $('#in-arq', el); inp.onchange = () => { const fl = inp.files[0]; if (!fl) return; const r = new FileReader(); r.onload = () => importar(r.result); r.readAsText(fl); inp.value = ''; }; }),
     exportar: async () => {

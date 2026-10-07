@@ -324,4 +324,17 @@ button,input,select,textarea{font-family:inherit;color:inherit;font-variation-se
 .cauda{transform-box:fill-box;transform-origin:0% 100%;animation:cauda 3.4s ease-in-out infinite}
 @keyframes cauda{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg)}}
 
+/* tela inicial enxuta */
+.resumo{display:grid;grid-template-columns:repeat(3,1fr);margin:16px 2px 0}
+.resumo b{display:block;font-size:30px;line-height:1;font-variation-settings:"wdth" 75;font-weight:750;font-feature-settings:"tnum"}
+.resumo b.brasa{color:var(--brasa-c)}
+.resumo span{font-size:12.5px;color:var(--txt3)}
+.semana-mini{display:flex;gap:4px;margin:16px 2px 6px}
+.semana-mini i{flex:1;height:4px;border-radius:2px;background:var(--surf3)}
+.semana-mini i.ok{background:var(--latao)}
+.resumo-aura{margin:0 2px 14px}
+.aviso-link{display:block;width:100%;text-align:left;background:transparent;border:0;border-top:1px solid var(--linha);color:var(--txt2);font-size:13.5px;padding:14px 2px;margin-top:8px}
+.aviso-link::after{content:"";float:right;width:7px;height:7px;border-top:1.5px solid var(--txt3);border-right:1.5px solid var(--txt3);transform:rotate(45deg);margin-top:5px}
+.palco{height:min(58vh,500px)}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

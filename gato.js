@@ -58,7 +58,7 @@
     const imc = med.peso / (alt * alt);
     const pctM = med.musculoKg ? (med.musculoKg / med.peso) * 100 : 36;
     // músculo depende do % e do tamanho do corpo: magro com % alto continua magro
-    const m = clamp((pctM - 31) / 15, 0, 1) * clamp((imc - 17) / 7, 0.3, 1);
+    const m = clamp((pctM - 32) / 10, 0, 1) * clamp((imc - 17) / 6, 0.35, 1);
     // gordura cresce de forma contínua até obesidade grave (IMC 45+)
     const g = clamp((imc - 21.5) / 18 - (pctM - 36) / 35, 0, 1.35);
     const fino = clamp((20.5 - imc) / 3.5, 0, 1);
@@ -78,7 +78,8 @@
   }
 
   function braco(lado, S, A, pose, R, C, Q, m) {
-    const poses = { idle: [12, 6], comemora: [150, 168], flex: [88, 178], sono: [5, 2], aceno: [12, 6] };
+    const ab = 18 * m;
+    const poses = { idle: [12 + ab, 6 + ab * 0.6], comemora: [150, 168], flex: [88, 178], sono: [5 + ab * 0.6, 2 + ab * 0.4], aceno: [12 + ab, 6 + ab * 0.6] };
     let [a1, a2] = poses[pose] || poses.idle;
     if (pose === 'aceno' && lado === 1) { a1 = 140; a2 = 165; }
     const sx = 150 + lado * (S - 9), sy = 166;
@@ -88,11 +89,12 @@
     const hx = ex + lado * Math.sin(r2) * L2, hy = ey + Math.cos(r2) * L2;
     const cor = R.tipo === 'longa' ? R.cor : C.pelo;
     let s = '<g>';
-    s += `<path d="M${pt(ex, ey)} L${pt(hx, hy)}" stroke="${cor}" stroke-width="${f1(A * 1.75)}" stroke-linecap="round"/>`;
+    s += `<path d="M${pt(ex, ey)} L${pt(hx, hy)}" stroke="${cor}" stroke-width="${f1(A * (1.6 + 0.45 * m))}" stroke-linecap="round"/>`;
     s += `<path d="M${pt(sx, sy)} L${pt(ex, ey)}" stroke="${cor}" stroke-width="${f1(A * 2.05)}" stroke-linecap="round"/>`;
+    if (m > 0.15) s += `<circle cx="${f1(sx + lado * A * 0.15)}" cy="${f1(sy - 2)}" r="${f1(A * (0.95 + 0.35 * m))}" fill="${cor}"/><path d="M${pt(sx + lado * A * 0.9, sy + A * 0.5)} Q${pt(sx + lado * A * 1.25, sy)} ${pt(sx + lado * A * 0.6, sy - A * 0.9)}" stroke="${C.esc}" stroke-width="2" fill="none" opacity="${f1(Math.min(0.7, m))}"/>`;
     const bx = sx + (ex - sx) * 0.55, by = sy + (ey - sy) * 0.55;
     const ang = Math.atan2(ey - sy, ex - sx) * 180 / Math.PI;
-    const bul = 1 + m * (pose === 'flex' ? 0.55 : 0.32);
+    const bul = 1 + m * (pose === 'flex' ? 1.15 : 0.6);
     s += `<ellipse cx="${f1(bx)}" cy="${f1(by)}" rx="${f1(A * 1.35)}" ry="${f1(A * bul)}" transform="rotate(${f1(ang)} ${f1(bx)} ${f1(by)})" fill="${cor}"/>`;
     if (C.padrao === 'tigrado' && R.tipo !== 'longa') {
       for (const t of [0.3, 0.62]) {
@@ -202,24 +204,24 @@
     const so = o.soCabeca;
     // proporções
     const fi = c.fino || 0;
-    const S = 40 + 24 * m + 12 * g - 6 * fi;   // meia largura dos ombros
-    const W = 27 + 3 * m + 40 * g - 4 * fi;    // meia largura da cintura
+    const S = 36 + 52 * m + 12 * g - 6 * fi;   // meia largura dos ombros (quase dobra com músculo)
+    const W = 26 + 7 * m + 40 * g - 4 * fi;    // meia largura da cintura (forma em V)
     const Bx = 22 * g;                          // barriga para fora
-    const A = 9 + 8 * m + 6 * g - 2 * fi;      // raio do braço
-    const T = 13 + 6 * m + 11 * g - 3 * fi;    // raio da coxa
-    const Cc = 10 + 3 * m + 6 * g - 2 * fi;    // raio da canela
+    const A = 8 + 19 * m + 6 * g - 2 * fi;     // raio do braço
+    const T = 12 + 15 * m + 11 * g - 3 * fi;   // raio da coxa
+    const Cc = 9 + 8 * m + 6 * g - 2 * fi;     // raio da canela
     const cai = 26 * Math.max(0, g - 0.25);     // barriga caindo por cima do short
     const Mx = Math.max(W + Bx * 0.25, S - 10 + 4 * g);
     const hx = Math.max(W * 0.45, T + 1);
     const yc = 266 + 6 * Math.min(g, 1);
     const ctx = { S, W, Bx, A, T, Cc, Mx, yc, g, m, hx };                     // linha da cintura
 
-    let s = `<svg viewBox="${so ? '82 14 136 168' : '0 0 300 420'}" xmlns="http://www.w3.org/2000/svg" class="heroi-svg ${o.apagado ? 'apagado' : ''}" role="img" aria-label="Gato">`;
+    let s = `<svg viewBox="${so ? '82 14 136 168' : '-40 0 380 420'}" xmlns="http://www.w3.org/2000/svg" class="heroi-svg ${o.apagado ? 'apagado' : ''}" role="img" aria-label="Gato">`;
     if (!so) {
       s += `<ellipse cx="150" cy="403" rx="${f1(64 + S * 0.5 + g * 20)}" ry="9" fill="#000" opacity=".28"/>`;
       s += aura(o.aura || 0);
     }
-    s += `<g class="corpo" transform="translate(150 400) scale(${(so ? 1 : c.h).toFixed(3)}) translate(-150 -400)">`;
+    s += `<g class="corpo" transform="translate(150 400) scale(${(so ? 1 : c.h * (1 + 0.14 * m)).toFixed(3)}) translate(-150 -400)">`;
     if (!so) {
       if (AC && Q.costas) s += AC.costas(Q.costas, ctx);
       // cauda
@@ -242,6 +244,8 @@
       s += `<path d="M${pt(150 - W - Bx * 0.2 - 3, yc - 8)} L${pt(150 + W + Bx * 0.2 + 3, yc - 8)} L${pt(150 + hx + T + 5, yc + 44)} Q${pt(150 + hx, yc + 50)} ${pt(153, yc + 42)} L150,${yc + 20} L${pt(147, yc + 42)} Q${pt(150 - hx, yc + 50)} ${pt(150 - hx - T - 5, yc + 44)} Z" fill="#2c3038"/>`;
       s += `<path d="M${pt(150 - W - Bx * 0.2 - 2, yc - 3)} L${pt(150 + W + Bx * 0.2 + 2, yc - 3)}" stroke="#a8834f" stroke-width="3"/>`;
     }
+    // trapézio
+    if (m > 0.2) s += `<path d="M${pt(150 - 16, 118)} Q${pt(150 - S * 0.55, 128 - m * 6)} ${pt(150 - S + 4, 158)} L${pt(150 + S - 4, 158)} Q${pt(150 + S * 0.55, 128 - m * 6)} ${pt(150 + 16, 118)} Z" fill="${C.pelo}"/>`;
     // tronco
     const tronco = `M${pt(150 - S * 0.5, 146)} Q${pt(150 - S + 2, 146)} ${pt(150 - S, 166)} C${pt(150 - S + 1, 190)} ${pt(150 - Mx - Bx * 0.2, 206)} ${pt(150 - Mx - Bx * 0.5, 226)} C${pt(150 - Mx - Bx * 0.8, 250)} ${pt(150 - W - Bx * 0.4, yc - 4)} ${pt(150 - W, yc + 2)} Q150,${f1(yc + 2 + cai * 1.6)} ${pt(150 + W, yc + 2)} C${pt(150 + W + Bx * 0.4, yc - 4)} ${pt(150 + Mx + Bx * 0.8, 250)} ${pt(150 + Mx + Bx * 0.5, 226)} C${pt(150 + Mx + Bx * 0.2, 206)} ${pt(150 + S - 1, 190)} ${pt(150 + S, 166)} Q${pt(150 + S - 2, 146)} ${pt(150 + S * 0.5, 146)} Z`;
     s += `<path d="${tronco}" fill="${C.pelo}"/>`;
@@ -252,13 +256,24 @@
         s += `<path d="M${pt(150 - S + 2, 182)} l14,4 M${pt(150 - Mx - Bx * 0.4, 214)} l15,3 M${pt(150 - Mx - Bx * 0.6, 240)} l14,1 M${pt(150 + S - 2, 182)} l-14,4 M${pt(150 + Mx + Bx * 0.4, 214)} l-15,3 M${pt(150 + Mx + Bx * 0.6, 240)} l-14,1" stroke="${C.esc}" stroke-width="4" stroke-linecap="round"/>`;
       }
       if (C.mancha1) s += `<ellipse cx="${f1(150 - S * 0.62)}" cy="200" rx="${f1(S * 0.32)}" ry="20" fill="${C.mancha2}"/><ellipse cx="${f1(150 + Mx * 0.7)}" cy="236" rx="${f1(Mx * 0.3)}" ry="18" fill="${C.mancha1}"/>`;
-      // músculos
+      // músculos: peitoral em placas, abdômen em blocos, serrátil
       const lin = C.esc;
-      s += `<path d="M${pt(150 - S * 0.72, 184 + m * 4)} Q${pt(150 - S * 0.35, 200 + m * 8)} 150,${f1(190 + m * 3)} Q${pt(150 + S * 0.35, 200 + m * 8)} ${pt(150 + S * 0.72, 184 + m * 4)}" stroke="${lin}" stroke-width="${f1(2 + m * 1.5)}" fill="none" stroke-linecap="round" opacity="${f1(0.2 + m * 0.65 - g * 0.3)}"/>`;
-      if (m > 0.45 && g < 0.45) {
-        const op = Math.min(0.85, (m - 0.45) * 2.2) * (1 - g * 1.6);
-        s += `<path d="M150,${208 + m * 2} L150,${yc - 10} M${150 - 11},216 Q150,219 ${150 + 11},216 M${150 - 11},230 Q150,233 ${150 + 11},230 M${150 - 10},244 Q150,247 ${150 + 10},244" stroke="${lin}" stroke-width="2.4" fill="none" stroke-linecap="round" opacity="${f1(op)}"/>`;
-        s += `<path d="M${pt(150 - S + 6, 176)} Q${pt(150 - S + 16, 196)} ${pt(150 - Mx + 6, 222)} M${pt(150 + S - 6, 176)} Q${pt(150 + S - 16, 196)} ${pt(150 + Mx - 6, 222)}" stroke="${lin}" stroke-width="2" fill="none" opacity="${f1(op * 0.7)}"/>`;
+      const opP = Math.max(0, Math.min(0.85, 0.15 + m * 0.9 - g * 0.35));
+      if (m > 0.12) {
+        const py = 172, ph = 22 + 16 * m, pw = S * 0.62;
+        s += `<path d="M150,${py} C${f1(150 - pw * 0.4)},${py - 4} ${f1(150 - pw)},${py - 2} ${f1(150 - pw - 4)},${f1(py + ph * 0.45)} C${f1(150 - pw)},${f1(py + ph)} ${f1(150 - pw * 0.3)},${f1(py + ph + 6)} 150,${f1(py + ph - 2)}" stroke="${lin}" stroke-width="${f1(2 + m * 2)}" fill="none" stroke-linecap="round" opacity="${f1(opP)}"/>`;
+        s += `<path d="M150,${py} C${f1(150 + pw * 0.4)},${py - 4} ${f1(150 + pw)},${py - 2} ${f1(150 + pw + 4)},${f1(py + ph * 0.45)} C${f1(150 + pw)},${f1(py + ph)} ${f1(150 + pw * 0.3)},${f1(py + ph + 6)} 150,${f1(py + ph - 2)}" stroke="${lin}" stroke-width="${f1(2 + m * 2)}" fill="none" stroke-linecap="round" opacity="${f1(opP)}"/>`;
+        s += `<ellipse cx="${f1(150 - pw * 0.55)}" cy="${f1(py + ph * 0.45)}" rx="${f1(pw * 0.35)}" ry="${f1(ph * 0.22)}" fill="#fff" opacity="${f1(0.06 + m * 0.08)}"/><ellipse cx="${f1(150 + pw * 0.55)}" cy="${f1(py + ph * 0.45)}" rx="${f1(pw * 0.35)}" ry="${f1(ph * 0.22)}" fill="#fff" opacity="${f1(0.06 + m * 0.08)}"/>`;
+      } else {
+        s += `<path d="M${pt(150 - S * 0.62, 186)} Q150,${f1(196)} ${pt(150 + S * 0.62, 186)}" stroke="${lin}" stroke-width="2" fill="none" opacity=".2"/>`;
+      }
+      if (m > 0.3 && g < 0.55) {
+        const op = Math.min(0.9, (m - 0.3) * 2) * (1 - g * 1.4);
+        const top = 204 + m * 6, bw = 9 + m * 6, bh = (yc - 14 - top) / 3;
+        let abs = '';
+        for (let k = 0; k < 3; k++) for (const l of [-1, 1]) abs += `<rect x="${f1(l < 0 ? 150 - bw - 1.5 : 151.5)}" y="${f1(top + k * bh + 1)}" width="${f1(bw)}" height="${f1(bh - 3)}" rx="${f1(bw * 0.4)}" fill="none" stroke="${lin}" stroke-width="2"/>`;
+        s += `<g opacity="${f1(op)}">${abs}</g>`;
+        s += `<path d="M${pt(150 - S + 8, 196)} l10,4 M${pt(150 - S + 10, 208)} l10,4 M${pt(150 - S + 13, 220)} l9,4 M${pt(150 + S - 8, 196)} l-10,4 M${pt(150 + S - 10, 208)} l-10,4 M${pt(150 + S - 13, 220)} l-9,4" stroke="${lin}" stroke-width="2" stroke-linecap="round" opacity="${f1(op * 0.8)}"/>`;
       }
       if (R.tipo === 'nada' && AC && AC.TAT_PEITO.includes(Q.tatuagem)) s += AC.tatPeito(Q.tatuagem, ctx);
       if (g > 0.3) {
