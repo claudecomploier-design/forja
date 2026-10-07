@@ -1,5 +1,5 @@
-const CACHE = 'forja-v1';
-const ARQ = ['./', 'index.html', 'style.css', 'app.js', 'char.js', 'manifest.json', 'icon.svg', 'icon-180.png', 'icon-192.png', 'icon-512.png'];
+const CACHE = 'forja-v2';
+const ARQ = ['./', 'index.html', 'style.css', 'app.js', 'char.js', 'anim.js', 'data.js', 'manifest.json', 'icon.svg', 'icon-180.png', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQ)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {

@@ -4,174 +4,49 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Forja</title>
-<meta name="theme-color" content="#ffe9d6">
+<meta name="description" content="Academia estilo RPG: seu herói evolui com o seu treino.">
+<meta name="theme-color" content="#0f0d16">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Forja">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="app">
   <header class="topo">
     <div class="marca"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3c4 5 9 7 9 15a9 9 0 0 1-18 0c0-4 2-7 4-8 0 3 1 5 3 6-1-6 0-10 2-13z" fill="#ff8a3d"/><path d="M16 14c2 3 4 4 4 7a4 4 0 0 1-8 0c0-2 1-3 2-4 0 2 1 2 2 3 0-3-1-4 0-6z" fill="#ffd36e"/></svg>Forja</div>
-    <button class="chip-nivel" id="chip-nivel" data-ir="heroi">Nv 7</button>
+    <button class="chip-nivel" id="chip-nivel" data-ir="perfil">Nv 7</button>
   </header>
-
   <main>
-    <!-- HERÓI -->
-    <section class="tela ativa" id="tela-heroi">
-      <div class="palco" id="palco">
-        <div class="cenario" id="cenario"></div>
-        <div class="heroi-wrap" id="heroi-wrap"></div>
-        <div class="balao" id="balao">Bora treinar!</div>
-        <div class="confete" id="confete"></div>
-      </div>
-
-      <div class="aviso-backup oculto" id="aviso-backup">
-        <span>Faz tempo que você não faz backup.</span>
-        <button class="btn mini" data-ir="ajustes">Fazer</button>
-      </div>
-
-      <div class="cartao semana">
-        <div class="linha-topo">
-          <h2>Meta da semana</h2>
-          <b id="semana-txt">0 de 4</b>
-        </div>
-        <div class="bolinhas" id="bolinhas"></div>
-        <div class="dupla">
-          <div class="mini-stat"><b id="seq-n">0</b><span>semanas seguidas</span></div>
-          <div class="mini-stat"><b id="aura-dias">0</b><span>dias de aura</span></div>
-        </div>
-        <div class="aura-prog">
-          <div class="linha-topo"><span id="aura-nome">Primeira aura</span><small id="aura-falta">faltam 100 dias</small></div>
-          <div class="barra aura-barra"><i id="aura-barra"></i></div>
-        </div>
-      </div>
-
-      <div class="cartao">
-        <div class="linha-topo"><h2>Atributos</h2><small>nível geral = soma</small></div>
-        <div id="atributos" class="atributos"></div>
-      </div>
-
-      <div class="cartao corpo-resumo" id="corpo-resumo"></div>
-
-      <button class="btn grande verde" data-ir="treinar">Treinar agora</button>
-    </section>
-
-    <!-- TREINAR -->
-    <section class="tela" id="tela-treinar">
-      <h1 class="titulo">Registro rápido</h1>
-      <p class="sub">Toque nos grupos que você treinou e informe as séries. Cada série vale 10 XP.</p>
-      <div id="grupos-reg" class="grupos-reg"></div>
-      <div class="cartao cardio-reg">
-        <div class="linha-topo"><h2>Cardio</h2><small>2 XP por minuto</small></div>
-        <div class="stepper grande-step">
-          <button class="btn redondo" data-cardio="-5">−5</button>
-          <b id="cardio-min">0 min</b>
-          <button class="btn redondo" data-cardio="5">+5</button>
-        </div>
-      </div>
-      <div class="cartao previa-xp" id="previa-xp"></div>
-      <button class="btn grande verde" id="btn-concluir">Concluir treino</button>
-      <p class="nota">Na próxima etapa entram os treinos completos, com exercícios, cargas e cronômetro.</p>
-    </section>
-
-    <!-- CORPO -->
-    <section class="tela" id="tela-corpo">
-      <h1 class="titulo">Corpo real</h1>
-      <p class="sub">Seu personagem só fica mais forte quando suas medidas mudam de verdade. Use os números da balança de bioimpedância.</p>
-      <div class="cartao" id="medida-atual"></div>
-      <div class="cartao">
-        <h2>Nova medição</h2>
-        <label class="campo"><span>Peso (kg)</span><input id="in-peso" type="number" inputmode="decimal" step="0.1" placeholder="ex.: 78,5"></label>
-        <label class="campo"><span>Altura (cm)</span><input id="in-altura" type="number" inputmode="numeric" step="1" placeholder="ex.: 178"></label>
-        <div class="campo">
-          <span>Massa muscular</span>
-          <div class="linha-in">
-            <input id="in-musculo" type="number" inputmode="decimal" step="0.1" placeholder="ex.: 34,2">
-            <div class="seg" id="seg-unid">
-              <button class="ativo" data-u="kg">kg</button><button data-u="pct">%</button>
-            </div>
-          </div>
-        </div>
-        <button class="btn grande azul" id="btn-medida">Salvar medição</button>
-      </div>
-      <div class="cartao">
-        <div class="linha-topo"><h2>Prévia</h2><small>não salva nada</small></div>
-        <p class="sub pequeno">Arraste para ver como o personagem muda com o corpo.</p>
-        <div class="previa-wrap">
-          <div class="previa-heroi" id="previa-heroi"></div>
-          <div class="previa-ctrl">
-            <label>Massa muscular <b id="pv-m-t">36%</b><input type="range" id="pv-m" min="28" max="50" step="0.5" value="36"></label>
-            <label>Peso <b id="pv-p-t">78 kg</b><input type="range" id="pv-p" min="50" max="130" step="1" value="78"></label>
-          </div>
-        </div>
-      </div>
-      <div class="cartao">
-        <h2>Histórico</h2>
-        <div id="hist-medidas" class="hist"></div>
-      </div>
-    </section>
-
-    <!-- AJUSTES -->
-    <section class="tela" id="tela-ajustes">
-      <h1 class="titulo">Ajustes</h1>
-      <div class="cartao">
-        <h2>Meta semanal</h2>
-        <div class="seg largo" id="seg-meta">
-          <button data-meta="3">3 treinos</button><button data-meta="4">4 treinos</button><button data-meta="5">5 treinos</button>
-        </div>
-        <p class="sub pequeno">A sequência conta semanas cumpridas, para respeitar o descanso.</p>
-      </div>
-      <div class="cartao">
-        <h2>Guarda-roupa</h2>
-        <h3>Roupas</h3><div class="grade-itens" id="itens-roupa"></div>
-        <h3>Acessórios</h3><div class="grade-itens" id="itens-acessorio"></div>
-        <h3>Cenários</h3><div class="grade-itens" id="itens-cenario"></div>
-      </div>
-      <div class="cartao">
-        <h2>Evolução da aura</h2>
-        <p class="sub pequeno">Um novo estágio a cada 100 dias de sequência semanal. Toque para ver no personagem.</p>
-        <div class="grade-auras" id="grade-auras"></div>
-      </div>
-      <div class="cartao">
-        <h2>Backup</h2>
-        <p class="sub pequeno" id="backup-info">Seus dados ficam só neste aparelho.</p>
-        <div class="col-btns">
-          <button class="btn azul" id="btn-exportar">Exportar arquivo</button>
-          <button class="btn branco" id="btn-copiar">Copiar backup como texto</button>
-          <label class="btn branco arquivo">Importar arquivo<input type="file" id="in-arquivo" accept=".json,application/json"></label>
-          <button class="btn branco" id="btn-colar">Colar backup de texto</button>
-        </div>
-      </div>
-      <div class="cartao">
-        <h2>Zona de cuidado</h2>
-        <button class="btn vermelho" id="btn-zerar">Apagar todos os dados</button>
-      </div>
-      <p class="nota">Forja v1 · etapa 1</p>
-    </section>
+    <section class="tela ativa" id="tela-heroi"></section>
+    <section class="tela" id="tela-treinos"></section>
+    <section class="tela" id="tela-progresso"></section>
+    <section class="tela" id="tela-amigos"></section>
+    <section class="tela" id="tela-perfil"></section>
   </main>
-
-  <nav class="barra-nav">
+  <nav class="barra-nav" id="barra-nav">
     <button class="ativo" data-ir="heroi"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-5 4-8 8-8s8 3 8 8z"/></svg><span>Herói</span></button>
-    <button data-ir="treinar"><svg viewBox="0 0 24 24"><rect x="1" y="9" width="4" height="6" rx="1.5"/><rect x="19" y="9" width="4" height="6" rx="1.5"/><rect x="5" y="6" width="3" height="12" rx="1.5"/><rect x="16" y="6" width="3" height="12" rx="1.5"/><rect x="8" y="11" width="8" height="2" rx="1"/></svg><span>Treinar</span></button>
-    <button data-ir="corpo"><svg viewBox="0 0 24 24"><path d="M5 20 L7 5 h10 l2 15z" opacity=".25"/><rect x="7" y="4" width="10" height="16" rx="5"/><path d="M12 8v4l2 2" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg><span>Corpo</span></button>
-    <button data-ir="ajustes"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2l2 3 3.5-.8.8 3.5 3 2-2 3 .8 3.5-3.5.8-2 3-3-2-3 2-2-3-3.5-.8.8-3.5-2-3 3-2 .8-3.5L10 5z" opacity=".35"/></svg><span>Ajustes</span></button>
+    <button data-ir="treinos"><svg viewBox="0 0 24 24"><rect x="1" y="9" width="4" height="6" rx="1.5"/><rect x="19" y="9" width="4" height="6" rx="1.5"/><rect x="5" y="6" width="3" height="12" rx="1.5"/><rect x="16" y="6" width="3" height="12" rx="1.5"/><rect x="8" y="11" width="8" height="2" rx="1"/></svg><span>Treinos</span></button>
+    <button data-ir="progresso"><svg viewBox="0 0 24 24"><rect x="3" y="13" width="4" height="8" rx="1.5"/><rect x="10" y="8" width="4" height="13" rx="1.5"/><rect x="17" y="3" width="4" height="18" rx="1.5"/></svg><span>Progresso</span></button>
+    <button data-ir="amigos"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="3.5"/><circle cx="17" cy="9" r="3"/><path d="M1 20c0-4 3-7 7-7s7 3 7 7z"/><path d="M14 20c0-2 0-4-1.5-5.5C14 13.5 15.5 13 17 13c3.5 0 6 2.5 6 7z" opacity=".6"/></svg><span>Amigos</span></button>
+    <button data-ir="perfil"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2l2 3 3.5-.8.8 3.5 3 2-2 3 .8 3.5-3.5.8-2 3-3-2-3 2-2-3-3.5-.8.8-3.5-2-3 3-2 .8-3.5L10 5z" opacity=".4"/></svg><span>Perfil</span></button>
   </nav>
 </div>
-
-<div class="modal oculto" id="modal">
-  <div class="modal-caixa" id="modal-caixa"></div>
-</div>
-
+<div id="folhas"></div>
+<div class="descanso oculto" id="descanso"></div>
+<div class="modal oculto" id="modal"><div class="modal-caixa" id="modal-caixa"></div></div>
+<div class="toast" id="toast"></div>
+<div class="confete" id="confete"></div>
 <script src="char.js"></script>
+<script src="anim.js"></script>
+<script src="data.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
