@@ -53,7 +53,7 @@
     const pick = (l, id) => (l.find(x => x.id === id) || l[0]);
     av = Object.assign({}, H.AVATAR_PADRAO, av || {});
     const pele = pick(H.PELES, av.pele), cab = pick(H.CORES_CABELO, av.corCabelo), bar = pick(H.CORES_CABELO, av.corBarba || av.corCabelo);
-    return { pele: pele.c, peleS: pele.s, cab: cab.c, barba: bar.e, camisa: '#ff8a3d', camisaE: '#e0702b', short: '#4b5378', tenis: '#f2f0f7', av };
+    return { pele: pele.c, peleS: pele.s, cab: cab.c, barba: bar.e, camisa: '#b8915c', camisaE: '#94733f', short: '#3a4150', tenis: '#d9d5ce', av };
   }
 
   function props(ex, P, frente) {
@@ -62,22 +62,22 @@
     if (eq === 'barra') {
       if (frente) {
         const y = (P.mN[1] + P.mF[1]) / 2;
-        s += seg([P.mN[0] - 34, y], [P.mF[0] + 34, y], '#b9b4c9', 4);
-        s += `<rect x="${(P.mN[0] - 44).toFixed(1)}" y="${(y - 15).toFixed(1)}" width="9" height="30" rx="3" fill="#ff8a3d"/><rect x="${(P.mF[0] + 35).toFixed(1)}" y="${(y - 15).toFixed(1)}" width="9" height="30" rx="3" fill="#ff8a3d"/>`;
+        s += seg([P.mN[0] - 34, y], [P.mF[0] + 34, y], '#a7acb2', 4);
+        s += `<rect x="${(P.mN[0] - 44).toFixed(1)}" y="${(y - 15).toFixed(1)}" width="9" height="30" rx="3" fill="#7d848d"/><rect x="${(P.mF[0] + 35).toFixed(1)}" y="${(y - 15).toFixed(1)}" width="9" height="30" rx="3" fill="#7d848d"/>`;
       } else {
-        s += circ(P.mN, 15, '#ff8a3d', 'stroke="#c85f22" stroke-width="2"') + circ(P.mN, 4, '#3a3548');
+        s += circ(P.mN, 15, '#7d848d', 'stroke="#5c636b" stroke-width="2"') + circ(P.mN, 4, '#2a2e33');
       }
     }
     return s;
   }
   function propsMao(ex, P, frente) {
     let s = '';
-    if (ex.placa) s += `<rect x="${(P.pN[0] + 4).toFixed(1)}" y="${(P.pN[1] - 26).toFixed(1)}" width="8" height="44" rx="3" fill="#7c86b8" transform="rotate(-35 ${P.pN[0].toFixed(1)} ${P.pN[1].toFixed(1)})"/>`;
+    if (ex.placa) s += `<rect x="${(P.pN[0] + 4).toFixed(1)}" y="${(P.pN[1] - 26).toFixed(1)}" width="8" height="44" rx="3" fill="#5f666e" transform="rotate(-35 ${P.pN[0].toFixed(1)} ${P.pN[1].toFixed(1)})"/>`;
     if (ex.corda) {
       const y = Math.max(P.pN[1], P.pF[1]) + 4;
-      s += `<path d="M${P.mN[0].toFixed(1)},${P.mN[1].toFixed(1)} C${(P.mN[0] - 30).toFixed(1)},${y + 4} ${(P.mF[0] + 30).toFixed(1)},${y + 4} ${P.mF[0].toFixed(1)},${P.mF[1].toFixed(1)}" stroke="#ff8fb1" stroke-width="2.4" fill="none"/>`;
+      s += `<path d="M${P.mN[0].toFixed(1)},${P.mN[1].toFixed(1)} C${(P.mN[0] - 30).toFixed(1)},${y + 4} ${(P.mF[0] + 30).toFixed(1)},${y + 4} ${P.mF[0].toFixed(1)},${P.mF[1].toFixed(1)}" stroke="#c6a06a" stroke-width="2" fill="none"/>`;
     }
-    const halter = p => `<g transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})"><rect x="-9" y="-2.5" width="18" height="5" rx="2" fill="#b9b4c9"/><rect x="-12" y="-6" width="6" height="12" rx="2" fill="#7c86b8"/><rect x="6" y="-6" width="6" height="12" rx="2" fill="#7c86b8"/></g>`;
+    const halter = p => `<g transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})"><rect x="-9" y="-2.5" width="18" height="5" rx="2" fill="#a7acb2"/><rect x="-12" y="-6" width="6" height="12" rx="2" fill="#5f666e"/><rect x="6" y="-6" width="6" height="12" rx="2" fill="#5f666e"/></g>`;
     if (ex.eq === 'halter') { s += halter(P.mN); if (frente) s += halter(P.mF); }
     if (ex.eq === 'halter1') s += halter(frente ? lp(P.mN, P.mF, 0.5) : P.mN);
     return s;
@@ -85,23 +85,23 @@
   function cabos(ex, P) {
     if (!ex.cabo) return '';
     const alvo = ex.caboPe ? P.pN : P.mN;
-    let s = seg(ex.cabo, alvo, '#8f88a8', 1.6);
-    if (ex.cabo2) s += seg(ex.cabo2, P.mF, '#8f88a8', 1.6);
-    s += circ(ex.cabo, 5, '#5c5670');
-    if (ex.cabo2) s += circ(ex.cabo2, 5, '#5c5670');
+    let s = seg(ex.cabo, alvo, '#7d838b', 1.4);
+    if (ex.cabo2) s += seg(ex.cabo2, P.mF, '#7d838b', 1.4);
+    s += circ(ex.cabo, 5, '#4a5058');
+    if (ex.cabo2) s += circ(ex.cabo2, 5, '#4a5058');
     return s;
   }
   function estaticos(ex) {
     if (!ex.st) return '';
     return ex.st.map(r => {
       const [x, y, w, h, ang, cor] = r;
-      return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${cor || '#3d3852'}" ${ang ? `transform="rotate(${ang} ${x} ${y})"` : ''}/>`;
+      return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" fill="${cor || '#353a41'}" ${ang ? `transform="rotate(${ang} ${x} ${y})"` : ''}/>`;
     }).join('');
   }
 
   function pe(ank, pt, lado) {
     const toe = pt ? [ank[0] + 9 * lado, ank[1] + 11] : [ank[0] + 13 * lado, ank[1] + 1];
-    return seg(ank, toe, '#f2f0f7', 8);
+    return seg(ank, toe, '#d9d5ce', 8);
   }
 
   function lateral(ex, P, C) {
@@ -120,7 +120,7 @@
     let s = '';
     // membros de trás
     s += seg(H, kF, C.peleS, 13) + seg(kF, aF, C.peleS, 11) + pe(aF, P.pt, 1);
-    s += seg(H, lp(H, kF, 0.5), '#3a4062', 17);
+    s += seg(H, lp(H, kF, 0.5), '#2e3440', 17);
     s += seg(S, eF, C.peleS, 11) + seg(eF, hF, C.peleS, 10) + circ(hF, 6, C.peleS);
     // tronco
     s += seg(H, S, C.camisa, 27);
@@ -158,8 +158,8 @@
     const [kL, aL] = ik(HL, P.pN, L.th, L.sh, P.sK || 1);
     const [kR, aR] = ik(HR, P.pF, L.th, L.sh, -(P.sK || 1));
     let s = '';
-    s += seg(HL, kL, C.pele, 13) + seg(kL, aL, C.pele, 11) + seg(aL, [aL[0] - 4, aL[1] + 1], '#f2f0f7', 9);
-    s += seg(HR, kR, C.pele, 13) + seg(kR, aR, C.pele, 11) + seg(aR, [aR[0] + 4, aR[1] + 1], '#f2f0f7', 9);
+    s += seg(HL, kL, C.pele, 13) + seg(kL, aL, C.pele, 11) + seg(aL, [aL[0] - 4, aL[1] + 1], '#d9d5ce', 9);
+    s += seg(HR, kR, C.pele, 13) + seg(kR, aR, C.pele, 11) + seg(aR, [aR[0] + 4, aR[1] + 1], '#d9d5ce', 9);
     s += `<path d="M${HL[0] - 7},${H[1] - 6} L${HR[0] + 7},${H[1] - 6} L${HR[0] + 9},${H[1] + 14} L${H[0] + 1},${H[1] + 14} L${H[0]},${H[1] + 6} L${H[0] - 1},${H[1] + 14} L${HL[0] - 9},${H[1] + 14} Z" fill="${C.short}"/>`;
     s += `<path d="M${SL[0] - 6},${sy - 2} Q${H[0]},${sy - 8} ${SR[0] + 6},${sy - 2} L${HR[0] + 7},${H[1] - 4} L${HL[0] - 7},${H[1] - 4} Z" fill="${C.camisa}"/>`;
     s += seg(SL, eL, C.pele, 11) + seg(SL, lp(SL, eL, 0.42), C.camisa, 14) + seg(eL, mL, C.pele, 10) + circ(mL, 6, C.pele);
@@ -189,7 +189,7 @@
     const C = cores(av);
     const frente = ex.a.v === 'f';
     const r = frente ? frontal(ex, P, C) : lateral(ex, P, C);
-    let s = `<rect x="0" y="${CHAO}" width="240" height="12" fill="#2b2838"/>`;
+    let s = `<rect x="0" y="${CHAO}" width="240" height="12" fill="#25282d"/>`;
     s += estaticos(ex);
     s += cabos(ex, r.P);
     s += r.s;

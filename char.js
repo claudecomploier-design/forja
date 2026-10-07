@@ -41,7 +41,7 @@
   const ROUPAS = {
     camiseta: { nome: 'Camiseta azul', cor: '#7cb7ff', esc: '#5d97e0', tipo: 'manga' },
     regata: { nome: 'Regata verde', cor: '#8fd6a8', esc: '#6bb98a', tipo: 'regata' },
-    preta: { nome: 'Camiseta preta', cor: '#3a3646', esc: '#26232f', tipo: 'manga' },
+    preta: { nome: 'Camiseta grafite', cor: '#33373d', esc: '#24272c', tipo: 'manga' },
     forja: { nome: 'Camiseta Forja', cor: '#ffb27a', esc: '#ef8f52', tipo: 'manga', logo: true },
     moletom: { nome: 'Moletom roxo', cor: '#b9a3f2', esc: '#957ad8', tipo: 'longa' },
     dourado: { nome: 'Uniforme dourado', cor: '#ffd36e', esc: '#e9b43c', tipo: 'manga', faixas: true }
@@ -234,7 +234,7 @@
       s += `<path d="M104,98 C98,40 202,40 196,98" stroke="#5b6b9a" stroke-width="7" fill="none" stroke-linecap="round"/><rect x="96" y="88" width="16" height="26" rx="8" fill="#7c8cc4"/><rect x="188" y="88" width="16" height="26" rx="8" fill="#7c8cc4"/>`;
     }
     if (humor === 'sono') {
-      s += `<g class="zzz"><text x="196" y="60" font-family="Fredoka,sans-serif" font-weight="700" font-size="18" fill="#a9b6ee">z</text><text x="208" y="44" font-family="Fredoka,sans-serif" font-weight="700" font-size="24" fill="#a9b6ee">Z</text></g>`;
+      s += `<g class="zzz"><text x="196" y="60" font-family="Archivo,sans-serif" font-weight="700" font-size="18" fill="#a9b6ee">z</text><text x="208" y="44" font-family="Archivo,sans-serif" font-weight="700" font-size="24" fill="#a9b6ee">Z</text></g>`;
     }
     return s + '</g>';
   }
@@ -272,12 +272,12 @@
         p += `<ellipse cx="${(kx - l * 2).toFixed(1)}" cy="322" rx="${(T * 0.55).toFixed(1)}" ry="${(T * 0.4).toFixed(1)}" fill="${pele.s}" opacity=".35"/>`;
         p += `<path d="M${pt(ax, 374)} L${pt(ax, 386)}" stroke="#fff" stroke-width="${(C * 2 + 1).toFixed(1)}"/>`;
         p += `<path d="M${(ax - 18 + l * 5).toFixed(1)},398 Q${(ax - 18 + l * 5).toFixed(1)},382 ${(ax + l * 5).toFixed(1)},382 Q${(ax + 20 + l * 5).toFixed(1)},382 ${(ax + 22 + l * 5).toFixed(1)},398 Z" fill="#fff" stroke="#c9d4f0" stroke-width="2"/>`;
-        p += `<rect x="${(ax - 19 + l * 5).toFixed(1)}" y="394" width="42" height="7" rx="3.5" fill="#ff8a3d"/>`;
+        p += `<rect x="${(ax - 19 + l * 5).toFixed(1)}" y="394" width="42" height="7" rx="3.5" fill="#c6a06a"/>`;
         return p;
       }).join('') + '</g>';
       const sy = 244;
-      s += `<path d="M${pt(150 - W - 2, sy)} L${pt(150 + W + 2, sy)} L${pt(150 + hx + T + 4, 298)} Q${pt(150 + hx, 304)} ${pt(153, 296)} L150,276 L${pt(147, 296)} Q${pt(150 - hx, 304)} ${pt(150 - hx - T - 4, 298)} Z" fill="#3d4466"/>`;
-      s += `<path d="M${pt(150 - W - 1, sy + 6)} L${pt(150 + W + 1, sy + 6)}" stroke="#2f3552" stroke-width="5"/>`;
+      s += `<path d="M${pt(150 - W - 2, sy)} L${pt(150 + W + 2, sy)} L${pt(150 + hx + T + 4, 298)} Q${pt(150 + hx, 304)} ${pt(153, 296)} L150,276 L${pt(147, 296)} Q${pt(150 - hx, 304)} ${pt(150 - hx - T - 4, 298)} Z" fill="#343a46"/>`;
+      s += `<path d="M${pt(150 - W - 1, sy + 6)} L${pt(150 + W + 1, sy + 6)}" stroke="#2a2f3a" stroke-width="5"/>`;
     }
     s += `<rect x="${(140 - 3 * m).toFixed(1)}" y="124" width="${(20 + 6 * m).toFixed(1)}" height="30" rx="8" fill="${pele.c}"/>`;
     s += `<rect x="${(140 - 3 * m).toFixed(1)}" y="136" width="${(20 + 6 * m).toFixed(1)}" height="8" fill="${pele.s}" opacity=".35"/>`;
@@ -292,7 +292,7 @@
     if (m > 0.55) s += `<path d="M150,206 L150,236 M140,214 Q150,217 160,214 M141,226 Q150,229 159,226" stroke="${R.esc}" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="${((m - 0.55) * 1.6).toFixed(2)}"/>`;
     if (R.faixas) s += `<path d="M${pt(150 - S + 4, 170)} L${pt(150 - W - 2, 248)} M${pt(150 + S - 4, 170)} L${pt(150 + W + 2, 248)}" stroke="#fff" stroke-width="5" opacity=".75"/>`;
     if (R.logo) s += `<path d="M150,190 C158,198 160,206 154,214 C156,206 150,202 148,206 C146,200 150,196 150,190 Z M150,200 C143,206 142,214 148,218 C140,216 138,206 150,200 Z" fill="#fff" opacity=".9"/>`;
-    if (o.roupa === 'preta') s += `<path d="M150,192 C156,198 158,206 153,212 C154,206 150,203 148,206 C146,201 150,197 150,192 Z" fill="#ff8a3d"/>`;
+    if (o.roupa === 'preta') s += `<path d="M150,192 C156,198 158,206 153,212 C154,206 150,203 148,206 C146,201 150,197 150,192 Z" fill="#c6a06a"/>`;
     s += `<path d="M${pt(135, 144)} Q150,${(162 + m * 2).toFixed(1)} ${pt(165, 144)} Z" fill="${pele.c}"/>`;
     s += `<path d="M${pt(134, 144)} Q150,${(163 + m * 2).toFixed(1)} ${pt(166, 144)}" stroke="${R.esc}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
     if (acc === 'medalha') s += `<path d="M138,146 L150,190 L162,146" stroke="#ff6b8b" stroke-width="6" fill="none" stroke-linejoin="round"/><circle cx="150" cy="196" r="11" fill="#ffd23f" stroke="#e9a91f" stroke-width="3"/>`;
@@ -307,6 +307,7 @@
 
   function cenario(id) {
     const C = {
+      forja: `<svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="fw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#17181b"/><stop offset="1" stop-color="#22201e"/></linearGradient><radialGradient id="fg" cx="18%" cy="82%" r="70%"><stop offset="0" stop-color="#d9693a" stop-opacity=".55"/><stop offset=".45" stop-color="#8a3d1c" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient><linearGradient id="ff" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2420"/><stop offset="1" stop-color="#131315"/></linearGradient></defs><rect width="300" height="420" fill="url(#fw)"/><g stroke="#ffffff" stroke-opacity=".035" stroke-width="1">${Array.from({ length: 12 }, (_, i) => `<line x1="0" x2="300" y1="${30 + i * 26}" y2="${30 + i * 26}"/>`).join('')}${Array.from({ length: 24 }, (_, i) => `<line x1="${(i % 2 ? 25 : 0) + (i >> 1) * 50}" x2="${(i % 2 ? 25 : 0) + (i >> 1) * 50}" y1="${30 + (i % 12) * 26}" y2="${56 + (i % 12) * 26}"/>`).join('')}</g><g fill="#0f1012" opacity=".9"><rect x="214" y="70" width="4" height="70"/><rect x="204" y="134" width="24" height="12" rx="2"/><rect x="242" y="70" width="3" height="60"/><circle cx="243.5" cy="138" r="10" fill="none" stroke="#0f1012" stroke-width="4"/><path d="M14 330 L14 270 Q14 236 46 236 L74 236 Q96 236 96 270 L96 330 Z"/></g><path d="M30 300 Q55 262 80 300 Z" fill="#d9693a" opacity=".9"/><path d="M40 300 Q55 276 70 300 Z" fill="#f0a06b"/><rect width="300" height="420" fill="url(#fg)"/><g fill="#0d0e10"><path d="M222 328 h58 v-8 q-6 -14 -24 -14 h-40 q10 8 6 14 z"/><rect x="236" y="328" width="20" height="18"/><rect x="226" y="346" width="40" height="8" rx="2"/></g><rect x="0" y="352" width="300" height="68" fill="url(#ff)"/><ellipse cx="150" cy="356" rx="200" ry="6" fill="#d9693a" opacity=".08"/>${[[60, 210, 1.6], [82, 170, 1.2], [44, 150, 1], [96, 240, 1.4], [70, 120, .9], [110, 190, 1]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#f0a06b" opacity=".7"/>`).join('')}</svg>`,
       parque: `<svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="cp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe3ff"/><stop offset="1" stop-color="#e8f6ff"/></linearGradient></defs><rect width="300" height="420" fill="url(#cp)"/><circle cx="246" cy="70" r="26" fill="#fff3b0"/><ellipse cx="70" cy="80" rx="34" ry="14" fill="#fff" opacity=".9"/><ellipse cx="96" cy="72" rx="22" ry="12" fill="#fff" opacity=".9"/><circle cx="34" cy="300" r="40" fill="#a8e0b4"/><circle cx="270" cy="296" r="46" fill="#98d6a6"/><rect x="0" y="330" width="300" height="90" fill="#bfe8c2"/><ellipse cx="150" cy="335" rx="220" ry="26" fill="#bfe8c2"/></svg>`,
       noite: `<svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="cn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c1a33"/><stop offset="1" stop-color="#34305a"/></linearGradient></defs><rect width="300" height="420" fill="url(#cn)"/>${Array.from({ length: 24 }, (_, i) => `<circle cx="${(i * 61) % 300}" cy="${(i * 37) % 260}" r="${1 + (i % 3) * 0.6}" fill="#fff" opacity="${0.35 + (i % 4) * 0.15}"/>`).join('')}<circle cx="240" cy="72" r="22" fill="#fff3c4"/><circle cx="250" cy="66" r="20" fill="#2a2748"/><circle cx="34" cy="300" r="40" fill="#2f4a46"/><circle cx="270" cy="296" r="46" fill="#2a433f"/><rect x="0" y="330" width="300" height="90" fill="#334d44"/><ellipse cx="150" cy="335" rx="220" ry="26" fill="#334d44"/></svg>`,
       academia: `<svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid slice"><rect width="300" height="420" fill="#2a2638"/><rect x="0" y="0" width="300" height="40" fill="#221f2e"/><rect x="40" y="10" width="60" height="10" rx="5" fill="#ffe9a8" opacity=".8"/><rect x="200" y="10" width="60" height="10" rx="5" fill="#ffe9a8" opacity=".8"/><rect x="18" y="120" width="10" height="200" rx="5" fill="#4a4460"/><rect x="62" y="120" width="10" height="200" rx="5" fill="#4a4460"/><rect x="10" y="170" width="70" height="8" rx="4" fill="#8f79d6"/><circle cx="12" cy="174" r="16" fill="#ff8a3d"/><circle cx="78" cy="174" r="16" fill="#ff8a3d"/><rect x="226" y="250" width="60" height="70" rx="12" fill="#3d3654"/><rect x="0" y="330" width="300" height="90" fill="#3a3450"/><path d="M0,330 L300,330" stroke="#ff8a3d" stroke-width="3"/></svg>`,
@@ -315,7 +316,7 @@
       arena: `<svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid slice"><rect width="300" height="420" fill="#2b1f1a"/><rect x="0" y="120" width="300" height="140" fill="#3d2a22"/><g fill="#6b4a3a">${Array.from({ length: 12 }, (_, i) => `<circle cx="${12 + i * 26}" cy="${150 + (i % 2) * 14}" r="9"/>`).join('')}</g><g fill="#7d5644">${Array.from({ length: 12 }, (_, i) => `<circle cx="${25 + i * 26}" cy="${196 + (i % 2) * 12}" r="9"/>`).join('')}</g><rect x="0" y="250" width="300" height="12" fill="#ff8a3d"/><rect x="0" y="330" width="300" height="90" fill="#c99a6a"/><ellipse cx="150" cy="332" rx="230" ry="22" fill="#c99a6a"/><path d="M60,0 L110,330 L190,330 L240,0" fill="#fff" opacity=".1"/></svg>`,
       espaco: `<svg viewBox="0 0 300 420" preserveAspectRatio="xMidYMid slice"><rect width="300" height="420" fill="#16152e"/>${Array.from({ length: 30 }, (_, i) => `<circle cx="${(i * 73) % 300}" cy="${(i * 41) % 300}" r="${1 + (i % 3) * 0.7}" fill="#fff" opacity="${0.4 + (i % 4) * 0.15}"/>`).join('')}<circle cx="240" cy="80" r="30" fill="#ffb3c4"/><ellipse cx="240" cy="80" rx="46" ry="10" fill="none" stroke="#ffd36e" stroke-width="4"/><ellipse cx="150" cy="380" rx="230" ry="70" fill="#4a4780"/><circle cx="80" cy="370" r="10" fill="#3a3770"/><circle cx="220" cy="390" r="14" fill="#3a3770"/></svg>`
     };
-    return C[id] || C.noite;
+    return C[id] || C.forja;
   }
 
   window.Heroi = { render, cenario, corpoDeMedidas, ROUPAS, AURAS, PELES, CORES_CABELO, CORES_OLHO, OPCOES, AVATAR_PADRAO };

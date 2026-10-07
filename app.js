@@ -9,20 +9,20 @@
   const H = window.Heroi;
 
   const ATTRS = [
-    { id: 'peito', nome: 'Peito', cor: '#ff8fb1', sig: 'PE' },
-    { id: 'costas', nome: 'Costas', cor: '#7cb7ff', sig: 'CO' },
-    { id: 'ombros', nome: 'Ombros', cor: '#b9a3f2', sig: 'OM' },
-    { id: 'bracos', nome: 'Braços', cor: '#ffa76b', sig: 'BR' },
-    { id: 'pernas', nome: 'Pernas', cor: '#5fd08a', sig: 'PN' },
-    { id: 'abdomen', nome: 'Abdômen', cor: '#ffc94a', sig: 'AB' },
-    { id: 'cardio', nome: 'Cardio', cor: '#ff7a7a', sig: 'CA' }
+    { id: 'peito', nome: 'Peito', cor: '#c98a72', sig: 'PE' },
+    { id: 'costas', nome: 'Costas', cor: '#7d9cbd', sig: 'CO' },
+    { id: 'ombros', nome: 'Ombros', cor: '#a394c2', sig: 'OM' },
+    { id: 'bracos', nome: 'Braços', cor: '#c6a06a', sig: 'BR' },
+    { id: 'pernas', nome: 'Pernas', cor: '#86ad8f', sig: 'PN' },
+    { id: 'abdomen', nome: 'Abdômen', cor: '#c2ac6c', sig: 'AB' },
+    { id: 'cardio', nome: 'Cardio', cor: '#c8705f', sig: 'CA' }
   ];
   const XP_SERIE = 10, XP_SEC = 5, XP_MIN = 2, TETO_GRUPO = 150, TETO_DIA = 400;
   const DIAS_SONO = 4, DIAS_APAGADO = 8, DIAS_BACKUP = 14, BONUS_REC = 15, MAX_REC = 3, MIN_AURA = 3;
 
   const ITENS = [
     { id: 'camiseta', tipo: 'roupa', nome: 'Camiseta azul', nivel: 0, cor: '#7cb7ff' },
-    { id: 'preta', tipo: 'roupa', nome: 'Camiseta preta', nivel: 0, cor: '#3a3646' },
+    { id: 'preta', tipo: 'roupa', nome: 'Camiseta grafite', nivel: 0, cor: '#33373d' },
     { id: 'regata', tipo: 'roupa', nome: 'Regata verde', nivel: 10, cor: '#8fd6a8' },
     { id: 'forja', tipo: 'roupa', nome: 'Camiseta Forja', nivel: 20, cor: '#ffb27a' },
     { id: 'moletom', tipo: 'roupa', nome: 'Moletom roxo', nivel: 35, cor: '#b9a3f2' },
@@ -34,6 +34,7 @@
     { id: 'munhequeira', tipo: 'acessorio', nome: 'Munhequeiras', nivel: 40, cor: '#ff7aa8' },
     { id: 'medalha', tipo: 'acessorio', nome: 'Medalha', nivel: 50, cor: '#ffd23f' },
     { id: 'capa', tipo: 'acessorio', nome: 'Capa', nivel: 75, cor: '#ff5a6e' },
+    { id: 'forja', tipo: 'cenario', nome: 'Forja', nivel: 0, cor: '#d9693a' },
     { id: 'noite', tipo: 'cenario', nome: 'Noite', nivel: 0, cor: '#2a2748' },
     { id: 'parque', tipo: 'cenario', nome: 'Parque', nivel: 0, cor: '#bfe8c2' },
     { id: 'academia', tipo: 'cenario', nome: 'Academia', nivel: 12, cor: '#3a3450' },
@@ -71,13 +72,13 @@
   function novoEstado() {
     const xp = {}; ATTRS.forEach(a => xp[a.id] = 0);
     return {
-      app: 'forja', v: 2,
+      app: 'forja', v: 3,
       perfil: { nome: '', metaSemanal: 4, criadoEm: hoje() },
       avatar: Object.assign({}, H.AVATAR_PADRAO),
       xp, xpDia: { data: hoje(), total: 0, grupos: {} },
       sessoes: [], medidas: [], treinos: [], exProprios: [],
       prog: {}, recordes: {}, amigos: [],
-      equip: { roupa: 'preta', acessorio: 'nenhum', cenario: 'noite' },
+      equip: { roupa: 'preta', acessorio: 'nenhum', cenario: 'forja' },
       sessaoAtiva: null, ultimoBackup: null, onboard: false
     };
   }
@@ -87,10 +88,11 @@
     o.perfil = Object.assign(n.perfil, s.perfil || {});
     o.avatar = Object.assign({}, H.AVATAR_PADRAO, s.avatar || {});
     o.xp = Object.assign({}, n.xp, s.xp || {});
-    o.equip = Object.assign({ roupa: 'preta', acessorio: 'nenhum', cenario: 'noite' }, s.equip || {});
+    o.equip = Object.assign({ roupa: 'preta', acessorio: 'nenhum', cenario: 'forja' }, s.equip || {});
+    if (!s.v || s.v < 3) o.equip.cenario = 'forja';
     ['sessoes', 'medidas', 'treinos', 'exProprios', 'amigos'].forEach(k => { if (!Array.isArray(o[k])) o[k] = []; });
     ['prog', 'recordes'].forEach(k => { if (!o[k] || typeof o[k] !== 'object') o[k] = {}; });
-    o.v = 2;
+    o.v = 3;
     return o;
   }
   function carregar() {
@@ -176,7 +178,7 @@
   }
   $('#modal').addEventListener('click', e => { if (e.target.id === 'modal' || e.target.closest('[data-fechar]')) fecharModal(); });
   function confete(n) {
-    const c = $('#confete'), cores = ['#ff8fb1', '#ffd36e', '#7cb7ff', '#4fd08a', '#b9a3f2', '#ff8a3d'];
+    const c = $('#confete'), cores = ['#c6a06a', '#e2c79b', '#d9693a', '#f0a06b', '#e8e4dd'];
     for (let i = 0; i < (n || 40); i++) {
       const p = document.createElement('i');
       p.style.left = Math.random() * 100 + '%'; p.style.background = cores[i % cores.length];
@@ -525,7 +527,7 @@
           ${it.series.map((s, k) => `<div class="serie ${s.feito ? 'feita' : ''}"><span class="n">${k + 1}</span>
             ${cK ? `<input type="number" inputmode="decimal" step="0.5" value="${s.kg}" data-s="${i}.${k}.kg" aria-label="Carga">` : '<span></span>'}
             <input type="number" inputmode="numeric" value="${s.reps}" data-s="${i}.${k}.reps" aria-label="${lbR}">
-            <button class="ok" data-a="marcarSerie" data-i="${i}" data-k="${k}" aria-label="Concluir série"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" stroke="${s.feito ? '#062514' : '#6f6886'}" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>`).join('')}
+            <button class="ok" data-a="marcarSerie" data-i="${i}" data-k="${k}" aria-label="Concluir série"><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" stroke="${s.feito ? '#16181b' : '#6d6b67'}" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>`).join('')}
           </div>
           <div class="acoes-s"><button class="btn mini fant" data-a="addSerie" data-i="${i}">+ Série</button><button class="btn mini fant" data-a="remSerie" data-i="${i}">− Série</button></div>
         </div>`;
@@ -633,12 +635,12 @@
     let s = `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Gráfico">`;
     for (let k = 0; k <= 3; k++) {
       const v = mn + (mx - mn) * k / 3, y = Y(v);
-      s += `<line x1="${pl}" x2="${W - pr}" y1="${y}" y2="${y}" stroke="#2f2a40" stroke-width="1"/><text x="${pl - 6}" y="${y + 4}" text-anchor="end" font-size="10.5" fill="#a59ebb" font-family="Nunito" font-weight="700">${num(v, 1)}</text>`;
+      s += `<line x1="${pl}" x2="${W - pr}" y1="${y}" y2="${y}" stroke="#33383f" stroke-width="1"/><text x="${pl - 6}" y="${y + 4}" text-anchor="end" font-size="10.5" fill="#8a8781" font-family="Archivo" font-weight="500">${num(v, 1)}</text>`;
     }
     const idxs = pts.length <= 6 ? pts.map((_, i) => i) : [0, Math.floor(pts.length / 2), pts.length - 1];
-    idxs.forEach(i => { s += `<text x="${X(i)}" y="${Hh - 6}" text-anchor="middle" font-size="10.5" fill="#a59ebb" font-family="Nunito" font-weight="700">${pts[i].l}</text>`; });
-    if (pts.length > 1) s += `<path d="${pts.map((p, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ',' + Y(p.y).toFixed(1)).join(' ')}" fill="none" stroke="#ff8a3d" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
-    pts.forEach((p, i) => { s += `<circle cx="${X(i)}" cy="${Y(p.y)}" r="4.5" fill="#ff8a3d" stroke="#1b1826" stroke-width="2"/>`; });
+    idxs.forEach(i => { s += `<text x="${X(i)}" y="${Hh - 6}" text-anchor="middle" font-size="10.5" fill="#8a8781" font-family="Archivo" font-weight="500">${pts[i].l}</text>`; });
+    if (pts.length > 1) s += `<path d="${pts.map((p, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ',' + Y(p.y).toFixed(1)).join(' ')}" fill="none" stroke="#c6a06a" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+    pts.forEach((p, i) => { s += `<circle cx="${X(i)}" cy="${Y(p.y)}" r="4" fill="#c6a06a" stroke="#1e2125" stroke-width="2"/>`; });
     pts.forEach((p, i) => { s += `<rect x="${X(i) - 14}" y="0" width="28" height="${Hh}" fill="transparent" data-gi="${i}"/>`; });
     s += '</svg><div class="dica oculto"></div>';
     el.innerHTML = s;
@@ -746,11 +748,11 @@
     $('#tela-perfil').innerHTML = `
       <div class="cartao"><div class="perfil-cab"><div class="rosto">${rosto(E.avatar)}</div><div><b>${esc(E.perfil.nome || 'Herói')}</b><span class="sub peq">Nível ${nivelGeral()}, ${xpTotal()} XP no total</span></div></div></div>
       <div class="lista-menu">
-        <button data-a="abrirAvatar"><span class="ic" style="background:#2a1c12">&#9786;</span><span>Criar avatar</span><small>rosto e barba</small></button>
-        <button data-a="abrirMedidas"><span class="ic" style="background:#16243a">&#9878;</span><span>Corpo e medidas</span><small>${medidaAtual() ? num(medidaAtual().peso) + ' kg' : 'cadastrar'}</small></button>
-        <button data-a="abrirRoupas"><span class="ic" style="background:#251a33">&#10022;</span><span>Guarda-roupa</span><small>itens</small></button>
-        <button data-a="abrirAuras"><span class="ic" style="background:#33150f">&#128293;</span><span>Evolução da aura</span><small>${au.pts} dias</small></button>
-        <button data-a="abrirBackup"><span class="ic" style="background:#14261c">&#8645;</span><span>Backup</span><small>${E.ultimoBackup ? fmtD(E.ultimoBackup) : 'nunca'}</small></button>
+        <button data-a="abrirAvatar"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="4"/><path d="M5 20c.7-3.6 3.5-5.6 7-5.6s6.3 2 7 5.6"/></svg></span><span>Criar avatar</span><small>rosto e barba</small></button>
+        <button data-a="abrirMedidas"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 10a3.5 3.5 0 0 1 7 0M12 10l1.5-2"/></svg></span><span>Corpo e medidas</span><small>${medidaAtual() ? num(medidaAtual().peso) + ' kg' : 'cadastrar'}</small></button>
+        <button data-a="abrirRoupas"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4l3 2 3-2 5 3-2 4-2-1v10H8V10l-2 1-2-4z"/></svg></span><span>Guarda-roupa</span><small>itens</small></button>
+        <button data-a="abrirAuras"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c2.4 3 5 4.6 5 8.8a5 5 0 0 1-10 0c0-2.2 1.1-3.8 2.2-4.6.1 1.7.7 2.8 1.7 3.3-.4-3.2.2-5.4 1.1-7.5z"/></svg></span><span>Evolução da aura</span><small>${au.pts} dias</small></button>
+        <button data-a="abrirBackup"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg></span><span>Backup</span><small>${E.ultimoBackup ? fmtD(E.ultimoBackup) : 'nunca'}</small></button>
       </div>
       <div class="cartao"><h2>Nome</h2><label class="campo" style="margin:0"><input id="pf-nome" value="${esc(E.perfil.nome)}" maxlength="24" placeholder="Seu nome"></label></div>
       <div class="cartao"><h2>Meta semanal</h2><div class="seg">${[3, 4, 5].map(n => `<button class="${E.perfil.metaSemanal === n ? 'ativo' : ''}" data-a="meta" data-v="${n}">${n} treinos</button>`).join('')}</div>
