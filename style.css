@@ -316,4 +316,12 @@ button,input,select,textarea{font-family:inherit;color:inherit;font-variation-se
 .onb .heroi-intro{height:250px;display:flex;justify-content:center;align-items:flex-end;margin-bottom:14px;border-radius:var(--r3);border:1px solid var(--linha);overflow:hidden;position:relative}
 .onb .heroi-intro svg{height:100%;width:auto;position:relative}
 
+/* guarda-roupa */
+.item-g .mini-rosto{width:46px;height:46px;border-radius:10px;overflow:hidden;background:var(--surf2);display:block}
+.item-g .mini-rosto svg{width:100%;height:100%}
+.av-fixo{position:sticky;top:58px;z-index:3;height:220px}
+.aureola{animation:halo 2.4s ease-in-out infinite}
+.cauda{transform-box:fill-box;transform-origin:0% 100%;animation:cauda 3.4s ease-in-out infinite}
+@keyframes cauda{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg)}}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

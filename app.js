@@ -21,35 +21,32 @@
   const DIAS_SONO = 4, DIAS_APAGADO = 8, DIAS_BACKUP = 14, BONUS_REC = 15, MAX_REC = 3, MIN_AURA = 3;
 
   const ITENS = [
-    { id: 'camiseta', tipo: 'roupa', nome: 'Camiseta azul', nivel: 0, cor: '#7cb7ff' },
+    { id: 'nenhuma', tipo: 'roupa', nome: 'Só o pelo', nivel: 0, cor: '#d98a4b' },
     { id: 'preta', tipo: 'roupa', nome: 'Camiseta grafite', nivel: 0, cor: '#33373d' },
-    { id: 'regata', tipo: 'roupa', nome: 'Regata verde', nivel: 10, cor: '#8fd6a8' },
-    { id: 'forja', tipo: 'roupa', nome: 'Camiseta Forja', nivel: 20, cor: '#ffb27a' },
-    { id: 'moletom', tipo: 'roupa', nome: 'Moletom roxo', nivel: 35, cor: '#b9a3f2' },
-    { id: 'dourado', tipo: 'roupa', nome: 'Uniforme dourado', nivel: 60, cor: '#ffd36e' },
-    { id: 'nenhum', tipo: 'acessorio', nome: 'Nenhum', nivel: 0, cor: '#2f2a40' },
-    { id: 'faixa', tipo: 'acessorio', nome: 'Faixa', nivel: 15, cor: '#ff6b8b' },
-    { id: 'fone', tipo: 'acessorio', nome: 'Fone', nivel: 25, cor: '#7c8cc4' },
-    { id: 'bone', tipo: 'acessorio', nome: 'Boné', nivel: 30, cor: '#ff7a59' },
-    { id: 'munhequeira', tipo: 'acessorio', nome: 'Munhequeiras', nivel: 40, cor: '#ff7aa8' },
-    { id: 'medalha', tipo: 'acessorio', nome: 'Medalha', nivel: 50, cor: '#ffd23f' },
-    { id: 'capa', tipo: 'acessorio', nome: 'Capa', nivel: 75, cor: '#ff5a6e' },
+    { id: 'regata', tipo: 'roupa', nome: 'Regata', nivel: 10, cor: '#3f5a4c' },
+    { id: 'camiseta', tipo: 'roupa', nome: 'Camiseta aço', nivel: 15, cor: '#5f7590' },
+    { id: 'forja', tipo: 'roupa', nome: 'Camiseta Forja', nivel: 20, cor: '#8a4a2a' },
+    { id: 'moletom', tipo: 'roupa', nome: 'Moletom', nivel: 35, cor: '#4b4458' },
+    { id: 'dourado', tipo: 'roupa', nome: 'Regata de campeão', nivel: 60, cor: '#b8914f' },
+    { id: 'estudio', tipo: 'cenario', nome: 'Estúdio', nivel: 0, cor: '#2b2f35' },
     { id: 'forja', tipo: 'cenario', nome: 'Forja', nivel: 0, cor: '#d9693a' },
     { id: 'noite', tipo: 'cenario', nome: 'Noite', nivel: 0, cor: '#2a2748' },
-    { id: 'parque', tipo: 'cenario', nome: 'Parque', nivel: 0, cor: '#bfe8c2' },
     { id: 'academia', tipo: 'cenario', nome: 'Academia', nivel: 12, cor: '#3a3450' },
-    { id: 'praia', tipo: 'cenario', nome: 'Praia', nivel: 18, cor: '#ffe2a8' },
-    { id: 'montanha', tipo: 'cenario', nome: 'Montanha', nivel: 28, cor: '#b6c6ea' },
+    { id: 'parque', tipo: 'cenario', nome: 'Parque', nivel: 18, cor: '#bfe8c2' },
+    { id: 'praia', tipo: 'cenario', nome: 'Praia', nivel: 24, cor: '#ffe2a8' },
+    { id: 'montanha', tipo: 'cenario', nome: 'Montanha', nivel: 30, cor: '#b6c6ea' },
     { id: 'arena', tipo: 'cenario', nome: 'Arena', nivel: 45, cor: '#c99a6a' },
     { id: 'espaco', tipo: 'cenario', nome: 'Espaço', nivel: 70, cor: '#4a4780' }
   ];
+  Acess.ITENS.forEach(a => ITENS.push({ id: a.id, tipo: a.slot, nome: a.nome, nivel: a.nivel, cor: a.cor }));
+  const SLOTS = Acess.SLOTS;
 
   const FRASES = {
-    oi: ['Bora treinar?', 'Hoje tem treino?', 'Tô pronto, e você?', 'Vamos forjar esse corpo!', 'Um treino de cada vez.'],
-    toque: ['Olha esse muque!', 'Opa, cosquinha!', 'Sentiu a energia?', 'Treino bom é treino feito.'],
-    sono: ['Zzz... cadê o treino?', 'Tô ficando molenga...', 'Me acorda com um treino?'],
-    apagado: ['Perdi meu brilho...', 'Sinto falta da academia.', 'Um treino e eu volto a brilhar!'],
-    treino: ['Mandou bem!', 'Isso que é treino!', 'Mais forte a cada dia!', 'Sensacional!']
+    oi: ['Bora treinar?', 'Miau. Cadê o treino?', 'Tô pronto, e você?', 'Vamos forjar esse corpo!', 'Um treino de cada vez.'],
+    toque: ['Olha esse muque!', 'Miau!', 'Purr...', 'Sentiu a energia?', 'Gato que treina não mia, ruge.'],
+    sono: ['Zzz... cadê o treino?', 'Virando gato de sofá...', 'Me acorda com um treino?'],
+    apagado: ['Perdi meu brilho...', 'Sete vidas e nenhum treino.', 'Um treino e eu volto a brilhar!'],
+    treino: ['Mandou bem!', 'Isso que é treino!', 'Mais forte a cada dia!', 'Miau de respeito!']
   };
 
   /* ---------- datas ---------- */
@@ -72,13 +69,13 @@
   function novoEstado() {
     const xp = {}; ATTRS.forEach(a => xp[a.id] = 0);
     return {
-      app: 'forja', v: 3,
+      app: 'forja', v: 4,
       perfil: { nome: '', metaSemanal: 4, criadoEm: hoje() },
       avatar: Object.assign({}, H.AVATAR_PADRAO),
       xp, xpDia: { data: hoje(), total: 0, grupos: {} },
       sessoes: [], medidas: [], treinos: [], exProprios: [],
       prog: {}, recordes: {}, amigos: [],
-      equip: { roupa: 'preta', acessorio: 'nenhum', cenario: 'forja' },
+      equip: { roupa: 'nenhuma', cenario: 'estudio', chapeu: 'bone' },
       sessaoAtiva: null, ultimoBackup: null, onboard: false
     };
   }
@@ -86,13 +83,16 @@
     const n = novoEstado();
     const o = Object.assign(n, s);
     o.perfil = Object.assign(n.perfil, s.perfil || {});
-    o.avatar = Object.assign({}, H.AVATAR_PADRAO, s.avatar || {});
+    o.avatar = Object.assign({}, s.avatar && s.avatar.pelo ? s.avatar : H.AVATAR_PADRAO);
     o.xp = Object.assign({}, n.xp, s.xp || {});
-    o.equip = Object.assign({ roupa: 'preta', acessorio: 'nenhum', cenario: 'forja' }, s.equip || {});
-    if (!s.v || s.v < 3) o.equip.cenario = 'forja';
+    o.equip = Object.assign({ roupa: 'nenhuma', cenario: 'estudio' }, s.equip || {});
+    if (!s.v || s.v < 4) { o.equip.cenario = 'estudio'; o.equip.roupa = 'nenhuma'; }
+    if (!o.avatar.pelo) o.avatar = Object.assign({}, H.AVATAR_PADRAO);
+    const LEG = { faixa: 'chapeu', bone: 'chapeu', fone: 'chapeu', medalha: 'pescoco', munhequeira: 'maos', capa: 'costas' };
+    if (o.equip.acessorio) { if (LEG[o.equip.acessorio]) o.equip[LEG[o.equip.acessorio]] = o.equip.acessorio; delete o.equip.acessorio; }
     ['sessoes', 'medidas', 'treinos', 'exProprios', 'amigos'].forEach(k => { if (!Array.isArray(o[k])) o[k] = []; });
     ['prog', 'recordes'].forEach(k => { if (!o[k] || typeof o[k] !== 'object') o[k] = {}; });
-    o.v = 3;
+    o.v = 4;
     return o;
   }
   function carregar() {
@@ -213,7 +213,7 @@
       if (ex.a) Anim.montar(el, ex, E.avatar, { estatico: !el.dataset.vivo });
     });
   }
-  const rosto = (av, extra) => H.render(Object.assign({ avatar: av, soCabeca: true, roupa: 'preta' }, extra || {}));
+  const rosto = (av, extra) => H.render(Object.assign({ avatar: av && av.pelo ? av : H.AVATAR_PADRAO, soCabeca: true, roupa: 'nenhuma', equip: av === E.avatar ? E.equip : {} }, extra || {}));
 
   /* ---------- navegação ---------- */
   let abaAtual = 'heroi';
@@ -269,7 +269,7 @@
     const sono = sem >= DIAS_SONO;
     return Object.assign({
       corpo: H.corpoDeMedidas(medidaAtual()), avatar: E.avatar,
-      roupa: E.equip.roupa, acessorio: E.equip.acessorio,
+      roupa: E.equip.roupa, equip: E.equip,
       aura: auraPrevia != null ? auraPrevia : auraInfo().estagio,
       pose: poseTemp || (sono ? 'sono' : 'idle'),
       humor: humorTemp || (sono ? 'sono' : 'feliz'),
@@ -342,7 +342,7 @@
         ${ATTRS.map(a => { const i = infoNivel(E.xp[a.id]); return `<div class="attr"><div class="badge" style="background:${a.cor}">${a.sig}</div><div><div class="nm">${a.nome}<small>${i.atual}/${i.prox} XP</small></div><div class="barra"><i style="width:${i.atual / i.prox * 100}%;background:${a.cor}"></i></div></div><div class="nv">${i.nivel}</div></div>`; }).join('')}
       </div>
       ${m ? `<div class="cartao slim"><div class="linha"><div><b class="fd" style="font-size:18px">${num(m.peso)} kg</b> <span class="sub peq">${m.musculoKg ? num(H.corpoDeMedidas(m).pctM) + '% de massa muscular' : ''}</span></div><button class="btn mini" data-a="abrirMedidas">Medidas</button></div></div>`
-        : `<div class="cartao"><h2>Deixe o herói igual a você</h2><p class="sub">Cadastre peso, altura e massa muscular. O corpo do personagem só muda com o seu progresso real.</p><button class="btn azul largo" style="margin-top:12px" data-a="abrirMedidas">Cadastrar medidas</button></div>`}
+        : `<div class="cartao"><h2>Seu gato tem o seu corpo</h2><p class="sub">Cadastre peso, altura e massa muscular. O gato fica magro, forte ou gordo conforme as suas medidas reais.</p><button class="btn azul largo" style="margin-top:12px" data-a="abrirMedidas">Cadastrar medidas</button></div>`}
       ${E.sessoes.length && difDias(hoje(), E.ultimoBackup || E.perfil.criadoEm) >= DIAS_BACKUP ? `<div class="info">Faz ${difDias(hoje(), E.ultimoBackup || E.perfil.criadoEm)} dias sem backup. <a href="#" data-a="abrirBackup" style="color:inherit">Fazer agora</a></div>` : ''}
     `;
     desenharHeroi();
@@ -699,7 +699,7 @@
   let abaRank = 'semana';
   function meuResumo() {
     const st = statusSemana(), au = auraInfo();
-    return { v: 1, id: E.perfil.id || (E.perfil.id = uid()), n: E.perfil.nome || 'Herói', av: E.avatar, nv: nivelGeral(), xp: xpTotal(), sem: st.atual, sid: segunda(hoje()), seq: st.semanas, au: au.pts, ae: au.estagio, tot: new Set(E.sessoes.map(s => s.data)).size, ts: hoje() };
+    return { v: 1, id: E.perfil.id || (E.perfil.id = uid()), n: E.perfil.nome || 'Herói', av: E.avatar, eq: { chapeu: E.equip.chapeu, rosto: E.equip.rosto, pescoco: E.equip.pescoco }, nv: nivelGeral(), xp: xpTotal(), sem: st.atual, sid: segunda(hoje()), seq: st.semanas, au: au.pts, ae: au.estagio, tot: new Set(E.sessoes.map(s => s.data)).size, ts: hoje() };
   }
   const b64e = s => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const b64d = s => decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/'))));
@@ -735,7 +735,7 @@
       <div class="seg"><button class="${abaRank === 'semana' ? 'ativo' : ''}" data-a="abaRank" data-v="semana">Semana</button><button class="${abaRank === 'nivel' ? 'ativo' : ''}" data-a="abaRank" data-v="nivel">Nível</button><button class="${abaRank === 'seq' ? 'ativo' : ''}" data-a="abaRank" data-v="seq">Sequência</button><button class="${abaRank === 'aura' ? 'ativo' : ''}" data-a="abaRank" data-v="aura">Aura</button></div>
       <div class="cartao">${todos.map((p, i) => {
         const velho = !p.eu && difDias(hoje(), p.ts) >= 3;
-        return `<div class="rank ${p.eu ? 'eu' : ''}"><div class="pos ${i === 0 ? 'p1' : ''}">${i + 1}</div><div class="rosto">${rosto(p.av)}</div><div class="tit"><b>${esc(p.n)}${p.eu ? ' (você)' : ''}</b><span>${p.eu ? 'agora' : velho ? 'atualizado há ' + difDias(hoje(), p.ts) + ' dias' : 'atualizado em ' + fmtD(p.ts)}</span></div><div style="text-align:right"><div class="val">${val(p)}</div><span class="sub peq">${rot}</span></div>${p.eu ? '' : `<button class="icone-btn" data-a="removerAmigo" data-id="${esc(p.id)}" style="margin-left:4px;color:var(--fraco)" aria-label="Remover">&#10005;</button>`}</div>`;
+        return `<div class="rank ${p.eu ? 'eu' : ''}"><div class="pos ${i === 0 ? 'p1' : ''}">${i + 1}</div><div class="rosto">${rosto(p.eu ? E.avatar : p.av, p.eu ? {} : { equip: p.eq || {} })}</div><div class="tit"><b>${esc(p.n)}${p.eu ? ' (você)' : ''}</b><span>${p.eu ? 'agora' : velho ? 'atualizado há ' + difDias(hoje(), p.ts) + ' dias' : 'atualizado em ' + fmtD(p.ts)}</span></div><div style="text-align:right"><div class="val">${val(p)}</div><span class="sub peq">${rot}</span></div>${p.eu ? '' : `<button class="icone-btn" data-a="removerAmigo" data-id="${esc(p.id)}" style="margin-left:4px;color:var(--fraco)" aria-label="Remover">&#10005;</button>`}</div>`;
       }).join('')}
       ${E.amigos.length ? '' : '<div class="vazio">Adicione amigos para começar a disputa.</div>'}</div>
       <div class="info">Desafio da semana: quem fizer mais treinos até domingo vence. Para atualizar o placar, peça para cada amigo enviar o código de novo.</div>
@@ -748,9 +748,9 @@
     $('#tela-perfil').innerHTML = `
       <div class="cartao"><div class="perfil-cab"><div class="rosto">${rosto(E.avatar)}</div><div><b>${esc(E.perfil.nome || 'Herói')}</b><span class="sub peq">Nível ${nivelGeral()}, ${xpTotal()} XP no total</span></div></div></div>
       <div class="lista-menu">
-        <button data-a="abrirAvatar"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="4"/><path d="M5 20c.7-3.6 3.5-5.6 7-5.6s6.3 2 7 5.6"/></svg></span><span>Criar avatar</span><small>rosto e barba</small></button>
+        <button data-a="abrirAvatar"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="4"/><path d="M5 20c.7-3.6 3.5-5.6 7-5.6s6.3 2 7 5.6"/></svg></span><span>Seu gato</span><small>pelagem e olhos</small></button>
         <button data-a="abrirMedidas"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 10a3.5 3.5 0 0 1 7 0M12 10l1.5-2"/></svg></span><span>Corpo e medidas</span><small>${medidaAtual() ? num(medidaAtual().peso) + ' kg' : 'cadastrar'}</small></button>
-        <button data-a="abrirRoupas"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4l3 2 3-2 5 3-2 4-2-1v10H8V10l-2 1-2-4z"/></svg></span><span>Guarda-roupa</span><small>itens</small></button>
+        <button data-a="abrirRoupas"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4l3 2 3-2 5 3-2 4-2-1v10H8V10l-2 1-2-4z"/></svg></span><span>Guarda-roupa</span><small>${ITENS.filter(i => nivelGeral() >= i.nivel).length} de ${ITENS.length} itens</small></button>
         <button data-a="abrirAuras"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c2.4 3 5 4.6 5 8.8a5 5 0 0 1-10 0c0-2.2 1.1-3.8 2.2-4.6.1 1.7.7 2.8 1.7 3.3-.4-3.2.2-5.4 1.1-7.5z"/></svg></span><span>Evolução da aura</span><small>${au.pts} dias</small></button>
         <button data-a="abrirBackup"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg></span><span>Backup</span><small>${E.ultimoBackup ? fmtD(E.ultimoBackup) : 'nunca'}</small></button>
       </div>
@@ -763,38 +763,33 @@
   }
 
   function telaAvatar(titulo, botao) {
-    const av = E.avatar, O = H.OPCOES;
+    const av = E.avatar;
     const ops = (k, lista) => `<div class="opcoes">${lista.map(([id, nm]) => `<button class="${av[k] === id ? 'ativo' : ''}" data-a="av" data-k="${k}" data-v="${id}">${nm}</button>`).join('')}</div>`;
     const cores = (k, lista) => `<div class="opcoes cores">${lista.map(c => `<button class="${av[k] === c.id ? 'ativo' : ''}" style="background:${c.c}" data-a="av" data-k="${k}" data-v="${c.id}" aria-label="${c.nome}" title="${c.nome}"></button>`).join('')}</div>`;
-    return (titulo === false ? '' : topoFolha(titulo || 'Criar avatar', '<button class="btn mini fant" data-a="avSortear">Sortear</button>')) + `
+    return (titulo === false ? '' : topoFolha(titulo || 'Seu gato', '<button class="btn mini fant" data-a="avSortear">Sortear</button>')) + `
       <div class="av-prev" id="av-prev">${H.render(opcoesHeroi({ pose: 'idle', humor: 'feliz', apagado: false, aura: 0 }))}</div>
-      <h3>Tom de pele</h3>${cores('pele', H.PELES)}
-      <h3>Cabelo</h3>${ops('cabelo', O.cabelo)}
-      <h3>Cor do cabelo</h3>${cores('corCabelo', H.CORES_CABELO)}
-      <h3>Olhos</h3>${cores('olhos', H.CORES_OLHO)}
-      <h3>Sobrancelha</h3>${ops('sobrancelha', O.sobrancelha)}
-      <h3>Bigode</h3>${ops('bigode', O.bigode)}
-      <h3>Barba</h3>${ops('barba', O.barba)}
-      <h3>Cor da barba</h3>${cores('corBarba', H.CORES_CABELO)}
-      <h3>Óculos</h3>${ops('oculos', O.oculos)}
+      <h3>Pelagem</h3>${cores('pelo', H.PELAGENS)}
+      <h3>Padrão</h3>${ops('padrao', H.PADROES)}
+      <h3>Olhos</h3>${cores('olhos', H.OLHOS)}
+      <p class="nota">O corpo não é escolhido aqui: ele segue as suas medidas reais em Corpo e medidas.</p>
       ${botao ? '' : '<div class="rodape-fixo"><div class="dentro"><button class="btn prim grande" data-a="voltar">Pronto</button></div></div>'}`;
   }
 
   function telaMedidas() {
     const m = medidaAtual(), c = m ? H.corpoDeMedidas(m) : null;
     return topoFolha('Corpo e medidas') + `
-      <p class="sub">O corpo do herói é calculado só com as suas medidas reais. Meça a cada 2 a 4 semanas, no mesmo horário e em jejum.</p>
+      <p class="sub">O corpo do gato é calculado só com as suas medidas reais: fica magro, definido, forte ou gordo como você. Meça a cada 2 a 4 semanas, no mesmo horário e em jejum.</p>
       ${m ? `<div class="grade2" style="margin-top:12px"><div class="kpi"><b>${num(m.peso)} kg</b><span>peso</span></div><div class="kpi"><b>${m.altura} cm</b><span>altura</span></div><div class="kpi"><b>${m.musculoKg ? num(m.musculoKg) + ' kg' : '-'}</b><span>massa muscular</span></div><div class="kpi"><b>${num(c.pctM)}%</b><span>do peso em músculo</span></div></div>` : ''}
       <div class="cartao"><h2>Nova medição</h2>
         <label class="campo"><span>Peso (kg)</span><input id="md-peso" type="number" inputmode="decimal" step="0.1" placeholder="ex.: 78,5"></label>
         <label class="campo"><span>Altura (cm)</span><input id="md-alt" type="number" inputmode="numeric" value="${m ? m.altura : ''}" placeholder="ex.: 178"></label>
         <label class="campo"><span>Massa muscular</span><div style="display:flex;gap:8px"><input id="md-mus" type="number" inputmode="decimal" step="0.1" placeholder="ex.: 34,2" style="flex:1"><select id="md-un" style="width:90px"><option value="kg">kg</option><option value="pct">%</option></select></div></label>
         <button class="btn azul largo" data-a="salvarMedida">Salvar medição</button></div>
-      <div class="cartao"><h2>Prévia</h2><p class="sub peq">Arraste para ver como o herói muda. Não salva nada.</p>
+      <div class="cartao"><h2>Prévia</h2><p class="sub peq">Arraste para ver como o gato muda. Não salva nada.</p>
         <div style="display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;margin-top:8px">
           <div class="av-prev" style="height:190px" id="pv-heroi"></div>
-          <div><label class="campo"><span>Massa muscular <b id="pv-m-t"></b></span><input type="range" id="pv-m" min="28" max="50" step="0.5" value="${c ? Math.round(c.pctM * 2) / 2 : 36}" style="width:100%;accent-color:#ff8a3d"></label>
-          <label class="campo"><span>Peso <b id="pv-p-t"></b></span><input type="range" id="pv-p" min="50" max="130" step="1" value="${m ? Math.round(m.peso) : 78}" style="width:100%;accent-color:#ff8a3d"></label></div></div></div>
+          <div><label class="campo"><span>Massa muscular <b id="pv-m-t"></b></span><input type="range" id="pv-m" min="26" max="50" step="0.5" value="${c ? Math.round(c.pctM * 2) / 2 : 36}" style="width:100%;accent-color:#ff8a3d"></label>
+          <label class="campo"><span>Peso <b id="pv-p-t"></b></span><input type="range" id="pv-p" min="45" max="160" step="1" value="${m ? Math.round(m.peso) : 78}" style="width:100%;accent-color:#ff8a3d"></label></div></div></div>
       <div class="cartao"><h2>Histórico</h2>${E.medidas.length ? E.medidas.slice().reverse().map(x => `<div class="hist-s"><div class="tit"><b>${fmtDA(x.data)}</b><span>${num(x.peso)} kg${x.musculoKg ? ', ' + num(x.musculoKg) + ' kg de músculo' : ''}</span></div><button class="icone-btn" data-a="apagarMedida" data-id="${x.data}" style="color:var(--fraco)">&#10005;</button></div>`).join('') : '<div class="vazio">Nenhuma medição ainda.</div>'}</div>`;
   }
   function previaMedidas(el) {
@@ -806,10 +801,23 @@
 
   function telaRoupas() {
     const nv = nivelGeral();
-    const grade = tipo => `<div class="grade-itens">${ITENS.filter(i => i.tipo === tipo).map(i => { const livre = nv >= i.nivel; return `<button class="item-g ${E.equip[tipo] === i.id ? 'sel' : ''} ${livre ? '' : 'trava'}" data-a="equipar" data-id="${i.id}"><span class="bola" style="background:${i.cor}"></span>${esc(i.nome)}${livre ? '' : `<small>nível ${i.nivel}</small>`}</button>`; }).join('')}</div>`;
-    return topoFolha('Guarda-roupa') + `<div class="av-prev" style="height:240px">${H.render(opcoesHeroi({ pose: 'idle', humor: 'feliz', apagado: false }))}</div>
-      <h3>Roupas</h3>${grade('roupa')}<h3>Acessórios</h3>${grade('acessorio')}<h3>Cenários</h3>${grade('cenario')}
-      <p class="nota">Novos itens são liberados ao subir de nível.</p>`;
+    const cabeca = ['chapeu', 'rosto', 'pescoco'];
+    const botao = (i, tipo, sel) => {
+      const livre = nv >= i.nivel;
+      const vis = cabeca.includes(tipo) ? `<span class="mini-rosto">${H.render({ avatar: E.avatar, soCabeca: true, roupa: 'nenhuma', equip: { [tipo]: i.id } })}</span>` : `<span class="bola" style="background:${i.cor}"></span>`;
+      return `<button class="item-g ${sel ? 'sel' : ''} ${livre ? '' : 'trava'}" data-a="equipar" data-id="${i.id}" data-tipo="${tipo}">${vis}${esc(i.nome)}${livre ? '' : `<small>nível ${i.nivel}</small>`}</button>`;
+    };
+    const grade = tipo => {
+      const lista = ITENS.filter(i => i.tipo === tipo);
+      const nenhum = tipo === 'roupa' || tipo === 'cenario' ? '' : `<button class="item-g ${!E.equip[tipo] ? 'sel' : ''}" data-a="equipar" data-id="" data-tipo="${tipo}"><span class="bola" style="background:transparent;border:1px dashed var(--linha2)"></span>Nenhum</button>`;
+      const livres = lista.filter(i => nv >= i.nivel).length;
+      const titulo = tipo === 'roupa' ? 'Roupa' : tipo === 'cenario' ? 'Cenário' : SLOTS.find(x => x[0] === tipo)[1];
+      return `<h3>${titulo} <span style="color:var(--txt3);font-weight:500">${livres} de ${lista.length}</span></h3><div class="grade-itens">${nenhum}${lista.map(i => botao(i, tipo, E.equip[tipo] === i.id)).join('')}</div>`;
+    };
+    const total = ITENS.length, livres = ITENS.filter(i => nv >= i.nivel).length;
+    return topoFolha('Guarda-roupa') + `<div class="av-prev av-fixo">${H.render(opcoesHeroi({ pose: 'idle', humor: 'feliz', apagado: false }))}</div>
+      <p class="sub peq" style="margin-top:10px">${livres} de ${total} itens liberados. Os demais saem conforme você sobe de nível. Dá para combinar um item de cada tipo.</p>
+      ${grade('roupa')}${SLOTS.map(([k]) => grade(k)).join('')}${grade('cenario')}`;
   }
   function telaAuras() {
     const au = auraInfo();
@@ -841,15 +849,15 @@
   function telaOnb() {
     const passos = `<div class="passos">${[0, 1, 2].map(i => `<i class="${i <= passoOnb ? 'on' : ''}"></i>`).join('')}</div>`;
     if (passoOnb === 0) return `<div class="onb">${passos}<div class="heroi-intro">${H.render(opcoesHeroi({ pose: 'aceno', humor: 'feliz', aura: 2, apagado: false }))}</div>
-      <h1>Bem-vindo à Forja</h1><p class="sub">Cada treino real deixa seu herói mais forte. Vamos criar o seu.</p>
+      <h1>Bem-vindo à Forja</h1><p class="sub">Seu gato treina com você. Cada treino real deixa ele mais forte, e o corpo dele segue as suas medidas.</p>
       <label class="campo"><span>Como você se chama?</span><input id="onb-nome" maxlength="24" value="${esc(E.perfil.nome)}" placeholder="Seu nome"></label>
       <div class="rodape-fixo"><div class="dentro"><button class="btn prim grande" data-a="onbProx">Continuar</button></div></div></div>`;
-    if (passoOnb === 1) return `<div class="onb">${passos}<h1>Seu avatar</h1><p class="sub">Deixe o herói com a sua cara.</p></div>${telaAvatar(false, true)}
+    if (passoOnb === 1) return `<div class="onb">${passos}<h1>Seu gato</h1><p class="sub">Escolha a pelagem, o padrão e os olhos.</p></div>${telaAvatar(false, true)}
       <div class="rodape-fixo"><div class="dentro"><button class="btn prim grande" data-a="onbProx">Continuar</button></div></div>`;
     return `<div class="onb">${passos}<h1>Sua meta</h1><p class="sub">Quantos treinos por semana? A sequência conta semanas cumpridas, e a aura cresce com pelo menos 3 treinos por semana.</p>
       <div class="seg" style="margin-top:16px">${[3, 4, 5].map(n => `<button class="${E.perfil.metaSemanal === n ? 'ativo' : ''}" data-a="onbMeta" data-v="${n}">${n} treinos</button>`).join('')}</div>
       <div class="cartao" style="text-align:left;margin-top:18px"><h2>Como seu herói evolui</h2>
-        <p class="sub peq">Cada série concluída dá XP ao grupo muscular. O corpo do herói só muda com suas medidas reais. A aura aparece com 15 dias de consistência e evolui até 10 anos.</p></div>
+        <p class="sub peq">Cada série concluída dá XP ao grupo muscular. O corpo do gato só muda com as suas medidas reais. A aura aparece com 15 dias de consistência e evolui até 10 anos.</p></div>
       <div class="rodape-fixo"><div class="dentro"><button class="btn prim grande" data-a="onbFim">Começar</button></div></div></div>`;
   }
 
@@ -933,11 +941,18 @@
     av: b => { E.avatar[b.dataset.k] = b.dataset.v; salvar(); redesenharTopo(); },
     avSortear: () => {
       const r = l => l[Math.floor(Math.random() * l.length)];
-      E.avatar = { pele: r(H.PELES).id, cabelo: r(H.OPCOES.cabelo)[0], corCabelo: r(H.CORES_CABELO).id, corBarba: r(H.CORES_CABELO).id, olhos: r(H.CORES_OLHO).id, sobrancelha: r(H.OPCOES.sobrancelha)[0], bigode: r(H.OPCOES.bigode)[0], barba: r(H.OPCOES.barba)[0], oculos: r(H.OPCOES.oculos)[0] };
+      E.avatar = { pelo: r(H.PELAGENS).id, padrao: r(H.PADROES)[0], olhos: r(H.OLHOS).id };
       salvar(); redesenharTopo();
     },
     abrirRoupas: () => abrirFolha('roupas', telaRoupas),
-    equipar: b => { const i = ITENS.find(x => x.id === b.dataset.id); if (nivelGeral() < i.nivel) return toast('Libera no nível ' + i.nivel + '.'); E.equip[i.tipo] = i.id; salvar(); redesenharTopo(); },
+    equipar: b => {
+      const tipo = b.dataset.tipo, id = b.dataset.id;
+      if (!id) { delete E.equip[tipo]; salvar(); return redesenharTopo(); }
+      const i = ITENS.find(x => x.id === id && x.tipo === tipo);
+      if (nivelGeral() < i.nivel) return toast('Libera no nível ' + i.nivel + '.');
+      if (E.equip[tipo] === id && tipo !== 'roupa' && tipo !== 'cenario') delete E.equip[tipo]; else E.equip[tipo] = id;
+      salvar(); redesenharTopo();
+    },
     abrirAuras: () => abrirFolha('auras', telaAuras),
     previaAura: b => { auraPrevia = +b.dataset.v; fecharTodasFolhas(); ir('heroi'); fala('Prévia: ' + H.AURAS[auraPrevia].nome); setTimeout(() => { auraPrevia = null; desenharHeroi(); }, 6000); },
     abrirBackup: () => abrirFolha('backup', telaBackup, el => { const inp = $('#in-arq', el); inp.onchange = () => { const fl = inp.files[0]; if (!fl) return; const r = new FileReader(); r.onload = () => importar(r.result); r.readAsText(fl); inp.value = ''; }; }),

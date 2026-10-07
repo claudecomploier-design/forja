@@ -48,14 +48,11 @@
   const seg = (a, b, c, w) => `<path d="M${a[0].toFixed(1)},${a[1].toFixed(1)} L${b[0].toFixed(1)},${b[1].toFixed(1)}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
   const circ = (p, r, c, extra) => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${r}" fill="${c}" ${extra || ''}/>`;
 
-  function cores(av) {
-    const H = window.Heroi;
-    const pick = (l, id) => (l.find(x => x.id === id) || l[0]);
-    av = Object.assign({}, H.AVATAR_PADRAO, av || {});
-    const pele = pick(H.PELES, av.pele), cab = pick(H.CORES_CABELO, av.corCabelo), bar = pick(H.CORES_CABELO, av.corBarba || av.corCabelo);
-    return { pele: pele.c, peleS: pele.s, cab: cab.c, barba: bar.e, camisa: '#b8915c', camisaE: '#94733f', short: '#3a4150', tenis: '#d9d5ce', av };
+  /* Manequim neutro e didático, igual para todos os usuários. */
+  function cores() {
+    return { pele: '#c9bcae', peleS: '#9f9387', cab: '#5a5f66', barba: '#5a5f66', camisa: '#b8915c', camisaE: '#94733f', short: '#3a4150', tenis: '#d9d5ce',
+      av: { cabelo: 'raspado', bigode: 'nenhum', barba: 'nenhuma' } };
   }
-
   function props(ex, P, frente) {
     let s = '';
     const eq = ex.eq;
@@ -202,7 +199,7 @@
   const CACHE = new Map();
   const N = 36;
   function quadros(ex, av) {
-    const k = ex.id + '|' + JSON.stringify(av || {});
+    const k = ex.id;
     if (!CACHE.has(k)) {
       const arr = [];
       for (let i = 0; i < N; i++) {
