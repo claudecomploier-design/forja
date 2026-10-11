@@ -338,3 +338,16 @@ button,input,select,textarea{font-family:inherit;color:inherit;font-variation-se
 .palco{height:min(58vh,500px)}
 
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* contadores diários (barras e abdominais) */
+.cont-hoje .cont-num{font-size:64px;line-height:1;margin:6px 0 2px;display:flex;align-items:baseline;gap:8px}
+.cont-hoje .cont-num span{font-size:15px;font-weight:500;color:var(--txt2);font-variation-settings:"wdth" 100}
+.cont-add{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.cont-add .btn{font-size:20px;min-height:56px;font-variation-settings:"wdth" 80;font-weight:750}
+.cont-livre{display:flex;gap:8px;margin-top:8px}
+.cont-livre input{flex:1;min-width:0;background:var(--surf2);border:1px solid var(--linha2);border-radius:var(--r2);padding:0 14px;font-size:16px;min-height:48px}
+.cont-series{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px}
+.cont-series span{background:var(--surf3);border-radius:var(--r1);padding:4px 10px;font-weight:650;font-size:14px;font-feature-settings:"tnum"}
+.cont-series .btn{margin-left:auto}
+.seg.seg-mini{padding:2px}
+.seg.seg-mini button{padding:5px 10px;font-size:12.5px;flex:none}

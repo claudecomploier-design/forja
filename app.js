@@ -76,9 +76,11 @@
       sessoes: [], medidas: [], treinos: [], exProprios: [],
       prog: {}, recordes: {}, amigos: [],
       equip: { roupa: 'nenhuma', cenario: 'estudio', chapeu: 'bone' },
-      sessaoAtiva: null, ultimoBackup: null, onboard: false
+      sessaoAtiva: null, ultimoBackup: null, onboard: false,
+      contadores: novoCont()
     };
   }
+  function novoCont() { return { barras: {}, abdominais: {}, meta: { barras: 0, abdominais: 0 } }; }
   function migrar(s) {
     const n = novoEstado();
     const o = Object.assign(n, s);
@@ -92,6 +94,8 @@
     if (o.equip.acessorio) { if (LEG[o.equip.acessorio]) o.equip[LEG[o.equip.acessorio]] = o.equip.acessorio; delete o.equip.acessorio; }
     ['sessoes', 'medidas', 'treinos', 'exProprios', 'amigos'].forEach(k => { if (!Array.isArray(o[k])) o[k] = []; });
     ['prog', 'recordes'].forEach(k => { if (!o[k] || typeof o[k] !== 'object') o[k] = {}; });
+    const c0 = novoCont(), c = o.contadores && typeof o.contadores === 'object' ? o.contadores : {};
+    o.contadores = { barras: c.barras || {}, abdominais: c.abdominais || {}, meta: Object.assign(c0.meta, c.meta || {}) };
     o.v = 4;
     return o;
   }
@@ -742,6 +746,7 @@
         <button data-a="abrirMedidas"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 10a3.5 3.5 0 0 1 7 0M12 10l1.5-2"/></svg></span><span>Corpo e medidas</span><small>${medidaAtual() ? num(medidaAtual().peso) + ' kg' : 'cadastrar'}</small></button>
         <button data-a="abrirRoupas"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4l3 2 3-2 5 3-2 4-2-1v10H8V10l-2 1-2-4z"/></svg></span><span>Guarda-roupa</span><small>${ITENS.filter(i => nivelGeral() >= i.nivel).length} de ${ITENS.length} itens</small></button>
         <button data-a="abrirAuras"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c2.4 3 5 4.6 5 8.8a5 5 0 0 1-10 0c0-2.2 1.1-3.8 2.2-4.6.1 1.7.7 2.8 1.7 3.3-.4-3.2.2-5.4 1.1-7.5z"/></svg></span><span>Evolução da aura</span><small>${au.pts} dias</small></button>
+        <button data-a="abrirContadores"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18M5 5v15M19 5v15M10 5l1 3.6M14 5l-1 3.6M12 11.8v5M10 20l2-3.2 2 3.2"/><circle cx="12" cy="10.2" r="1.5"/></svg></span><span>Barras e abdominais</span><small>diário</small></button>
         <button data-a="abrirBackup"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></svg></span><span>Backup</span><small>${E.ultimoBackup ? fmtD(E.ultimoBackup) : 'nunca'}</small></button>
       </div>
       <div class="cartao"><h2>Nome</h2><label class="campo" style="margin:0"><input id="pf-nome" value="${esc(E.perfil.nome)}" maxlength="24" placeholder="Seu nome"></label></div>
@@ -817,6 +822,82 @@
       <div class="grade3">${H.AURAS.slice(1).map((a, i) => `<button class="aura-item ${au.estagio >= i + 1 ? 'ating' : ''}" data-a="previaAura" data-v="${i + 1}"><div class="bola" style="background:radial-gradient(circle,${a.brilho},${a.a} 50%,${a.b})"></div>${esc(a.nome.replace('Aura ', ''))}<small>${a.rotulo}</small></button>`).join('')}</div>
       <p class="nota">Toque em uma aura para ver no seu herói.</p>`;
   }
+  /* ---------- contadores diários: barras e abdominais ---------- */
+  const CONT = { barras: { nome: 'Barras', unid: 'barras', passos: [1, 3, 5] }, abdominais: { nome: 'Abdominais', unid: 'abdominais', passos: [5, 10, 20] } };
+  let abaCont = 'barras';
+  const somaArr = a => (a || []).reduce((x, y) => x + y, 0);
+  const totalDia = (k, d) => somaArr(E.contadores[k][d]);
+  function statsCont(k) {
+    const reg = E.contadores[k], dias = Object.keys(reg).filter(d => somaArr(reg[d]) > 0).sort();
+    const h = hoje();
+    let seq = 0, d = totalDia(k, h) > 0 ? h : somaDias(h, -1);
+    while (totalDia(k, d) > 0) { seq++; d = somaDias(d, -1); }
+    let s7 = 0, s30 = 0;
+    for (let i = 0; i < 30; i++) { const v = totalDia(k, somaDias(h, -i)); s30 += v; if (i < 7) s7 += v; }
+    return {
+      dias, seq, s7, s30, media7: s7 / 7,
+      recDia: dias.reduce((m, x) => Math.max(m, somaArr(reg[x])), 0),
+      melhorSerie: dias.reduce((m, x) => Math.max(m, ...reg[x]), 0),
+      total: dias.reduce((t, x) => t + somaArr(reg[x]), 0)
+    };
+  }
+  function graficoCont(k, nDias) {
+    const h = hoje(), meta = E.contadores.meta[k] || 0;
+    const pts = []; for (let i = nDias - 1; i >= 0; i--) { const d = somaDias(h, -i); pts.push({ d, v: totalDia(k, d) }); }
+    const W = 320, Hh = 170, pl = 30, pr = 6, pt = 12, pb = 22;
+    const mx = Math.max(meta, ...pts.map(p => p.v), 5) * 1.12;
+    const bw = (W - pl - pr) / nDias, Y = v => pt + (1 - v / mx) * (Hh - pt - pb);
+    let s = `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Total por dia">`;
+    [0, .5, 1].forEach(f => { const v = Math.round(mx / 1.12 * f), y = Y(v); s += `<line x1="${pl}" x2="${W - pr}" y1="${y}" y2="${y}" stroke="#33383f"/><text x="${pl - 5}" y="${y + 4}" text-anchor="end" font-size="10" fill="#8a8781" font-family="Archivo">${v}</text>`; });
+    pts.forEach((p, i) => {
+      const x = pl + i * bw + bw * .18, w = bw * .64, y = Y(p.v), ok = meta && p.v >= meta;
+      if (p.v) s += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${w.toFixed(1)}" height="${(Y(0) - y).toFixed(1)}" rx="2" fill="${p.d === h ? '#e2c79b' : ok ? '#c6a06a' : '#7d6a4f'}"/>`;
+      const rot = nDias <= 14 || i % 5 === 4 || i === nDias - 1;
+      if (rot) s += `<text x="${(x + w / 2).toFixed(1)}" y="${Hh - 6}" text-anchor="middle" font-size="9.5" fill="${p.d === h ? '#e8e4dd' : '#8a8781'}" font-family="Archivo">${p.d === h ? 'hoje' : nDias <= 14 ? DIAS_SEM[dataDe(p.d).getDay()].slice(0, 3) : fmtD(p.d)}</text>`;
+    });
+    if (meta) s += `<line x1="${pl}" x2="${W - pr}" y1="${Y(meta)}" y2="${Y(meta)}" stroke="#d9693a" stroke-dasharray="4 4" stroke-width="1.5"/>`;
+    return s + '</svg>';
+  }
+  let diasGrafCont = 14;
+  function telaContadores() {
+    const k = abaCont, C = CONT[k], reg = E.contadores[k], h = hoje();
+    const series = reg[h] || [], tot = somaArr(series), meta = E.contadores.meta[k] || 0, st = statsCont(k);
+    const recente = st.dias.slice().reverse().slice(0, 12);
+    return topoFolha('Barras e abdominais') + `
+      <div class="seg">${Object.keys(CONT).map(x => `<button class="${x === k ? 'ativo' : ''}" data-a="contAba" data-v="${x}">${CONT[x].nome}</button>`).join('')}</div>
+      <div class="cartao cont-hoje">
+        <div class="linha"><h2>Hoje</h2><small>${series.length} ${series.length === 1 ? 'série' : 'séries'}</small></div>
+        <div class="cont-num fd">${tot}<span>${C.unid}</span></div>
+        ${meta ? `<div class="barra"><i style="width:${Math.min(100, tot / meta * 100)}%;${tot >= meta ? 'background:var(--brasa)' : ''}"></i></div><p class="sub peq" style="margin-top:6px">${tot >= meta ? 'Meta do dia batida.' : 'Faltam ' + (meta - tot) + ' para a meta de ' + meta + '.'}</p>` : ''}
+        <div class="cont-add">${C.passos.map(n => `<button class="btn prim" data-a="contAdd" data-v="${n}">+${n}</button>`).join('')}</div>
+        <div class="cont-livre"><input id="ct-n" type="number" inputmode="numeric" min="1" max="999" placeholder="Série de quantas?"><button class="btn azul" data-a="contAddLivre">Registrar</button></div>
+        ${series.length ? `<div class="cont-series">${series.map(n => `<span>${n}</span>`).join('')}<button class="btn mini fant" data-a="contDesfazer">Desfazer última</button></div>` : '<p class="nota" style="margin:12px 2px 0">Toque em um botão a cada série que terminar.</p>'}
+      </div>
+      <div class="kpis">
+        <div class="kpi"><b>${st.melhorSerie}</b><span>melhor série</span></div>
+        <div class="kpi"><b>${st.recDia}</b><span>recorde em um dia</span></div>
+        <div class="kpi"><b>${num(st.media7, 1)}</b><span>média por dia (7 dias)</span></div>
+        <div class="kpi"><b>${st.seq}</b><span>${st.seq === 1 ? 'dia seguido' : 'dias seguidos'}</span></div>
+      </div>
+      <div class="cartao"><div class="linha"><h2>Por dia</h2><div class="seg seg-mini">${[14, 30].map(n => `<button class="${diasGrafCont === n ? 'ativo' : ''}" data-a="contDias" data-v="${n}">${n} d</button>`).join('')}</div></div>
+        <div class="graf">${graficoCont(k, diasGrafCont)}</div>
+        <p class="nota" style="margin:4px 0 0">${num(st.s30, 0)} nos últimos 30 dias, ${num(st.total, 0)} no total.${meta ? ' Linha laranja: meta diária.' : ''}</p></div>
+      <div class="cartao"><h2>Meta diária</h2><div class="cont-livre" style="margin-top:4px"><input id="ct-meta" type="number" inputmode="numeric" min="0" max="9999" value="${meta || ''}" placeholder="Sem meta"><button class="btn azul" data-a="contMeta">Salvar</button></div></div>
+      <div class="cartao"><h2>Histórico</h2>${recente.length ? recente.map(d => { const dd = dataDe(d); return `<div class="hist-s"><div class="d"><b>${pad(dd.getDate())}</b><span>${DIAS_SEM[dd.getDay()]}</span></div><div class="tit"><b>${totalDia(k, d)} ${C.unid}</b><span>${reg[d].join(' + ')}</span></div><button class="icone-btn" data-a="contApagarDia" data-id="${d}" aria-label="Apagar dia" style="color:var(--fraco)">&#10005;</button></div>`; }).join('') : '<div class="vazio">Nenhum registro ainda.</div>'}</div>`;
+  }
+  function contRegistrar(n) {
+    n = Math.round(+n);
+    if (!(n > 0 && n < 1000)) return toast('Digite um número entre 1 e 999.');
+    const k = abaCont, h = hoje(), reg = E.contadores[k];
+    const antes = totalDia(k, h), rec = statsCont(k).recDia, meta = E.contadores.meta[k] || 0;
+    (reg[h] = reg[h] || []).push(n); salvar();
+    if (navigator.vibrate) navigator.vibrate(12);
+    const tot = antes + n;
+    if (meta && antes < meta && tot >= meta) { toast('Meta de ' + CONT[k].nome.toLowerCase() + ' batida!'); confete(30); }
+    else if (rec && antes <= rec && tot > rec) toast('Novo recorde do dia: ' + tot + '!');
+    redesenharTopo();
+  }
+
   function telaBackup() {
     return topoFolha('Backup') + `<p class="sub">Seus dados ficam só neste aparelho. Faça backup para não perder o progresso se trocar de celular ou limpar o navegador.</p>
       <div class="col" style="margin-top:14px"><button class="btn prim largo" data-a="exportar">Exportar arquivo</button><button class="btn fant largo" data-a="copiarBackup">Copiar backup como texto</button>
@@ -944,6 +1025,14 @@
       salvar(); redesenharTopo();
     },
     abrirAuras: () => abrirFolha('auras', telaAuras),
+    abrirContadores: () => abrirFolha('contadores', telaContadores, el => { const i = $('#ct-n', el); if (i) i.onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); contRegistrar(i.value); } }; }),
+    contAba: b => { abaCont = b.dataset.v; redesenharTopo(); },
+    contDias: b => { diasGrafCont = +b.dataset.v; redesenharTopo(); },
+    contAdd: b => contRegistrar(b.dataset.v),
+    contAddLivre: () => contRegistrar($('#ct-n').value),
+    contDesfazer: () => { const a = E.contadores[abaCont][hoje()]; if (a && a.length) { a.pop(); if (!a.length) delete E.contadores[abaCont][hoje()]; salvar(); redesenharTopo(); } },
+    contMeta: () => { const v = Math.max(0, Math.round(+$('#ct-meta').value || 0)); E.contadores.meta[abaCont] = v; salvar(); toast(v ? 'Meta diária: ' + v + '.' : 'Meta removida.'); redesenharTopo(); },
+    contApagarDia: async b => { if (await confirmar('Apagar ' + CONT[abaCont].nome.toLowerCase() + ' de ' + fmtDA(b.dataset.id) + '?', 'Apagar', true)) { delete E.contadores[abaCont][b.dataset.id]; salvar(); redesenharTopo(); } },
     abrirCiencia: () => abrirFolha('ciencia', () => topoFolha('Como os treinos foram montados') + CIENCIA.map(c => `<p class="sub" style="margin:12px 0">${esc(c)}</p>`).join('') + `<p class="nota">Referências: Schoenfeld, Ogborn e Krieger (2017), sobre volume semanal; Schoenfeld e colaboradores (2016), sobre intervalo de descanso; Helgerud e colaboradores (2007), sobre o protocolo 4x4. São treinos genéricos e podem ser ajustados. Com dor ou lesão, procure um profissional.</p>`),
     previaAura: b => { auraPrevia = +b.dataset.v; fecharTodasFolhas(); ir('heroi'); fala('Prévia: ' + H.AURAS[auraPrevia].nome); setTimeout(() => { auraPrevia = null; desenharHeroi(); }, 6000); },
     abrirBackup: () => abrirFolha('backup', telaBackup, el => { const inp = $('#in-arq', el); inp.onchange = () => { const fl = inp.files[0]; if (!fl) return; const r = new FileReader(); r.onload = () => importar(r.result); r.readAsText(fl); inp.value = ''; }; }),
