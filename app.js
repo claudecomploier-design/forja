@@ -80,7 +80,7 @@
       contadores: novoCont()
     };
   }
-  function novoCont() { return { barras: {}, abdominais: {}, meta: { barras: 0, abdominais: 0 } }; }
+  function novoCont() { return { barras: {}, abdominais: {}, meta: { barras: 0, abdominais: 0 }, xp: {} }; }
   function migrar(s) {
     const n = novoEstado();
     const o = Object.assign(n, s);
@@ -95,7 +95,7 @@
     ['sessoes', 'medidas', 'treinos', 'exProprios', 'amigos'].forEach(k => { if (!Array.isArray(o[k])) o[k] = []; });
     ['prog', 'recordes'].forEach(k => { if (!o[k] || typeof o[k] !== 'object') o[k] = {}; });
     const c0 = novoCont(), c = o.contadores && typeof o.contadores === 'object' ? o.contadores : {};
-    o.contadores = { barras: c.barras || {}, abdominais: c.abdominais || {}, meta: Object.assign(c0.meta, c.meta || {}) };
+    o.contadores = { barras: c.barras || {}, abdominais: c.abdominais || {}, meta: Object.assign(c0.meta, c.meta || {}), xp: c.xp || {} };
     o.v = 4;
     return o;
   }
@@ -823,7 +823,26 @@
       <p class="nota">Toque em uma aura para ver no seu herói.</p>`;
   }
   /* ---------- contadores diários: barras e abdominais ---------- */
-  const CONT = { barras: { nome: 'Barras', unid: 'barras', passos: [1, 3, 5] }, abdominais: { nome: 'Abdominais', unid: 'abdominais', passos: [5, 10, 20] } };
+  const CONT = { barras: { nome: 'Barras', unid: 'barras', passos: [1, 3, 5], attr: 'costas', xpRep: 3 }, abdominais: { nome: 'Abdominais', unid: 'abdominais', passos: [5, 10, 20], attr: 'abdomen', xpRep: 1 } };
+  const TETO_CONT = 45; // XP máximo por dia em cada contador, dentro dos tetos gerais do dia
+  // acerta o XP do contador k no dia d para refletir o total registrado; devolve a variação
+  function xpCont(k, d) {
+    const C = CONT[k], reg = E.contadores.xp;
+    const dado = (reg[d] && reg[d][k]) || 0;
+    let alvo = Math.min(TETO_CONT, totalDia(k, d) * C.xpRep), delta = alvo - dado;
+    if (d === hoje()) {
+      if (E.xpDia.data !== hoje()) E.xpDia = { data: hoje(), total: 0, grupos: {} };
+      if (delta > 0) delta = Math.max(0, Math.min(delta, TETO_GRUPO - (E.xpDia.grupos[C.attr] || 0), TETO_DIA - E.xpDia.total));
+      E.xpDia.grupos[C.attr] = Math.max(0, (E.xpDia.grupos[C.attr] || 0) + delta);
+      E.xpDia.total = Math.max(0, E.xpDia.total + delta);
+    } else if (delta > 0) delta = 0;
+    if (!delta) return 0;
+    E.xp[C.attr] = Math.max(0, E.xp[C.attr] + delta);
+    reg[d] = reg[d] || {}; reg[d][k] = dado + delta;
+    if (!reg[d][k]) delete reg[d][k];
+    if (!Object.keys(reg[d]).length) delete reg[d];
+    return delta;
+  }
   let abaCont = 'barras';
   const somaArr = a => (a || []).reduce((x, y) => x + y, 0);
   const totalDia = (k, d) => somaArr(E.contadores[k][d]);
@@ -868,6 +887,7 @@
       <div class="cartao cont-hoje">
         <div class="linha"><h2>Hoje</h2><small>${series.length} ${series.length === 1 ? 'série' : 'séries'}</small></div>
         <div class="cont-num fd">${tot}<span>${C.unid}</span></div>
+        <p class="sub peq">${(() => { const g = (E.contadores.xp[h] && E.contadores.xp[h][k]) || 0; return '+' + g + ' XP em ' + attrPor(C.attr).nome + ' hoje' + (g >= TETO_CONT ? ' (máximo do dia)' : ', até ' + TETO_CONT); })()}</p>
         ${meta ? `<div class="barra"><i style="width:${Math.min(100, tot / meta * 100)}%;${tot >= meta ? 'background:var(--brasa)' : ''}"></i></div><p class="sub peq" style="margin-top:6px">${tot >= meta ? 'Meta do dia batida.' : 'Faltam ' + (meta - tot) + ' para a meta de ' + meta + '.'}</p>` : ''}
         <div class="cont-add">${C.passos.map(n => `<button class="btn prim" data-a="contAdd" data-v="${n}">+${n}</button>`).join('')}</div>
         <div class="cont-livre"><input id="ct-n" type="number" inputmode="numeric" min="1" max="999" placeholder="Série de quantas?"><button class="btn azul" data-a="contAddLivre">Registrar</button></div>
@@ -890,11 +910,15 @@
     if (!(n > 0 && n < 1000)) return toast('Digite um número entre 1 e 999.');
     const k = abaCont, h = hoje(), reg = E.contadores[k];
     const antes = totalDia(k, h), rec = statsCont(k).recDia, meta = E.contadores.meta[k] || 0;
-    (reg[h] = reg[h] || []).push(n); salvar();
+    const nvAntes = nivelGeral();
+    (reg[h] = reg[h] || []).push(n);
+    const ganho = xpCont(k, h); salvar();
     if (navigator.vibrate) navigator.vibrate(12);
-    const tot = antes + n;
-    if (meta && antes < meta && tot >= meta) { toast('Meta de ' + CONT[k].nome.toLowerCase() + ' batida!'); confete(30); }
+    const tot = antes + n, nvDepois = nivelGeral();
+    if (nvDepois > nvAntes) { toast('Subiu para o nível ' + nvDepois + '!'); confete(50); }
+    else if (meta && antes < meta && tot >= meta) { toast('Meta de ' + CONT[k].nome.toLowerCase() + ' batida!'); confete(30); }
     else if (rec && antes <= rec && tot > rec) toast('Novo recorde do dia: ' + tot + '!');
+    else if (ganho > 0) toast('+' + ganho + ' XP em ' + attrPor(CONT[k].attr).nome + '.');
     redesenharTopo();
   }
 
@@ -1030,9 +1054,9 @@
     contDias: b => { diasGrafCont = +b.dataset.v; redesenharTopo(); },
     contAdd: b => contRegistrar(b.dataset.v),
     contAddLivre: () => contRegistrar($('#ct-n').value),
-    contDesfazer: () => { const a = E.contadores[abaCont][hoje()]; if (a && a.length) { a.pop(); if (!a.length) delete E.contadores[abaCont][hoje()]; salvar(); redesenharTopo(); } },
+    contDesfazer: () => { const a = E.contadores[abaCont][hoje()]; if (a && a.length) { a.pop(); if (!a.length) delete E.contadores[abaCont][hoje()]; xpCont(abaCont, hoje()); salvar(); redesenharTopo(); } },
     contMeta: () => { const v = Math.max(0, Math.round(+$('#ct-meta').value || 0)); E.contadores.meta[abaCont] = v; salvar(); toast(v ? 'Meta diária: ' + v + '.' : 'Meta removida.'); redesenharTopo(); },
-    contApagarDia: async b => { if (await confirmar('Apagar ' + CONT[abaCont].nome.toLowerCase() + ' de ' + fmtDA(b.dataset.id) + '?', 'Apagar', true)) { delete E.contadores[abaCont][b.dataset.id]; salvar(); redesenharTopo(); } },
+    contApagarDia: async b => { if (await confirmar('Apagar ' + CONT[abaCont].nome.toLowerCase() + ' de ' + fmtDA(b.dataset.id) + '?', 'Apagar', true)) { delete E.contadores[abaCont][b.dataset.id]; xpCont(abaCont, b.dataset.id); salvar(); redesenharTopo(); } },
     abrirCiencia: () => abrirFolha('ciencia', () => topoFolha('Como os treinos foram montados') + CIENCIA.map(c => `<p class="sub" style="margin:12px 0">${esc(c)}</p>`).join('') + `<p class="nota">Referências: Schoenfeld, Ogborn e Krieger (2017), sobre volume semanal; Schoenfeld e colaboradores (2016), sobre intervalo de descanso; Helgerud e colaboradores (2007), sobre o protocolo 4x4. São treinos genéricos e podem ser ajustados. Com dor ou lesão, procure um profissional.</p>`),
     previaAura: b => { auraPrevia = +b.dataset.v; fecharTodasFolhas(); ir('heroi'); fala('Prévia: ' + H.AURAS[auraPrevia].nome); setTimeout(() => { auraPrevia = null; desenharHeroi(); }, 6000); },
     abrirBackup: () => abrirFolha('backup', telaBackup, el => { const inp = $('#in-arq', el); inp.onchange = () => { const fl = inp.files[0]; if (!fl) return; const r = new FileReader(); r.onload = () => importar(r.result); r.readAsText(fl); inp.value = ''; }; }),
